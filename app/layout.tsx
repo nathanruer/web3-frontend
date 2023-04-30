@@ -3,7 +3,6 @@ import './globals.css'
 import { Roboto } from "next/font/google"
 
 import Navbar from './components/navbar/Navbar';
-import ConnectWalletModal from './components/modals/ConnectWalletModal';
 
 const font = Roboto({
   subsets: ["latin"],
@@ -24,7 +23,6 @@ export default function RootLayout({
     <html lang="en">
       <body className={`bg-gradient-to-b from-gray-900 to-gray-600
        ${font.className}`}>
-        <ConnectWalletModal />
         <Navbar />
         {children}
       </body>

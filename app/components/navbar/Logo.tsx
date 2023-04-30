@@ -11,7 +11,7 @@ const Logo = () => {
     hover:scale-110 transition" 
     onClick={() => router.push('/')}>
       <GiSpaceship color="white" size={25} />
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <p className="text-white font-semibold">Nathan RUER</p>
       </div>
     </div>
