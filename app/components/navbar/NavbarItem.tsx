@@ -2,14 +2,17 @@
 
 interface NavbarItemProps {
   label: string;
+  mobile?: boolean;
 }
 
 const NavbarItem: React.FC<NavbarItemProps> = ({
-  label
+  label,
+  mobile
 }) => {
   return ( 
-    <div className="text-white cursor-pointer hover:opacity-80
-    hover:scale-110 transition">
+    <div className={`text-white cursor-pointer hover:opacity-80
+    ${mobile ? '' : 'hover:scale-110 transition'}`
+    }>
       {label}
     </div>
    );
