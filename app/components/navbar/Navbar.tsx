@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
 import Logo from "./Logo";
@@ -19,10 +20,10 @@ const Navbar = () => {
         <div className="flex flex-row justify-between items-center">
           <Logo />
           <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10">
-            <NavbarItem label="About us" />
-            <NavbarItem label="Tokenomics" />
-            <NavbarItem label="Earn" />
-            <NavbarItem label="Contact us" />
+            <NavbarItem href="#about-us" label="About us" />
+            <NavbarItem href="#claim" label="Claim" />
+            <NavbarItem href="#tokenomics" label="Tokenomics" />
+            <NavbarItem href="#contact-us" label="Contact us" />
           </div>
           <ConnectWalletButton />
           <div className="md:hidden">
@@ -46,13 +47,13 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col">
                 <hr className="mb-6"></hr>
-                <NavbarItem label="About us" mobile />
+                <NavbarItem href="#about-us" label="About us" mobile />
                 <hr className="my-6"></hr>
-                <NavbarItem label="Tokenomics" mobile />
+                <NavbarItem href="#claim" label="Claim" mobile />
                 <hr className="my-6"></hr>
-                <NavbarItem label="Earn" mobile />
+                <NavbarItem href="#tokenomics" label="Tokenomics" mobile />
                 <hr className="my-6"></hr>
-                <NavbarItem label="Contact us" mobile />
+                <NavbarItem href="#contact-us" label="Contact us" mobile />
                 <hr className="my-6"></hr>
               </div>
             </div>

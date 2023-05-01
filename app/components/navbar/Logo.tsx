@@ -12,7 +12,7 @@ const Logo = () => {
     onClick={() => router.push('/')}>
       <GiSpaceship color="white" size={25} />
       <div className="hidden lg:block">
-        <p className="text-white font-semibold">Nathan RUER</p>
+        <p className="text-white font-semibold">SHITCOIN</p>
       </div>
     </div>
    );

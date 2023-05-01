@@ -3,14 +3,23 @@
 interface NavbarItemProps {
   label: string;
   mobile?: boolean;
+  href: string,
 }
 
 const NavbarItem: React.FC<NavbarItemProps> = ({
   label,
-  mobile
+  mobile,
+  href
 }) => {
+  
+  const handleClick = async () => {
+    window.location.href=href;
+  };
+
   return ( 
-    <div className={`text-white cursor-pointer hover:opacity-80
+    <div 
+    onClick={handleClick}
+    className={`text-white cursor-pointer hover:opacity-80
     ${mobile ? '' : 'hover:scale-110 transition'}`
     }>
       {label}

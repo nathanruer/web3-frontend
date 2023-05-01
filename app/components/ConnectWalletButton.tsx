@@ -1,3 +1,5 @@
+'use client';
+
 import '@rainbow-me/rainbowkit/styles.css';
 
 import {
@@ -33,20 +35,26 @@ const wagmiClient = createClient({
   provider
 })
 
+interface ConnectWalletButtonProps {
+  label: string;
+  mobile?: boolean;
+}
+
 const ConnectWalletButton = () => {
   return (
     <WagmiConfig client={wagmiClient}>
-    <RainbowKitProvider 
-      chains={chains}
-      modalSize="compact"
-      coolMode
-      theme={lightTheme({
-        accentColor: '#E2E2E2',
-        accentColorForeground: 'black',
-      })}>
-      <ConnectButton chainStatus="icon"/>
-    </RainbowKitProvider>
-  </WagmiConfig>
+      <RainbowKitProvider 
+        chains={chains}
+        modalSize="compact"
+        coolMode
+        showRecentTransactions={true}
+        theme={lightTheme({
+          accentColor: '#E2E2E2',
+          accentColorForeground: 'black',
+        })}>
+        <ConnectButton chainStatus="icon" />
+      </RainbowKitProvider>
+    </WagmiConfig>
   )
 }
 

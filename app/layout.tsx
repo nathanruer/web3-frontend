@@ -1,12 +1,15 @@
+'use client';
+
 import './globals.css'
 
 import { Roboto } from "next/font/google"
 
 import Navbar from './components/navbar/Navbar';
+import ClientOnly from './components/ClientOnly';
 
 const font = Roboto({
   subsets: ["latin"],
-  weight: "300",
+  weight: "700",
 });
 
 export const metadata = {
@@ -21,10 +24,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`bg-gradient-to-b from-gray-900 to-gray-600
+      <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white
        ${font.className}`}>
-        <Navbar />
-        {children}
+        <ClientOnly>
+          <Navbar />
+          {children}
+        </ClientOnly>
       </body>
     </html>
   )
