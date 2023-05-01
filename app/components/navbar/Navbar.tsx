@@ -8,10 +8,10 @@ import ConnectWalletButton from "../ConnectWalletButton";
 import { IoMdClose } from "react-icons/io";
 
 const Navbar = () => {
-  const [showMenu, setShowMenu] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleMenu = () => {
-    setShowMenu(!showMenu);
+    setShowSidebar(!showSidebar);
   };
 
   return (
@@ -33,7 +33,7 @@ const Navbar = () => {
         </div>
       </div>
       
-      {showMenu && (
+      {showSidebar && (
         <div className="md:hidden flex overflow-x-hidden overflow-y-auto 
         fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70">
           <div className="bg-gradient-to-b from-gray-900 to-gray-600 shadow-xl
