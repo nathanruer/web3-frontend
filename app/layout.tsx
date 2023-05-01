@@ -19,7 +19,7 @@ export const metadata = {
 
 import '@rainbow-me/rainbowkit/styles.css';
 
-import { getDefaultWallets } from '@rainbow-me/rainbowkit';
+import { getDefaultWallets, RainbowKitProvider, lightTheme } from '@rainbow-me/rainbowkit';
 import { configureChains, createClient, WagmiConfig } from 'wagmi';
 import { mainnet, goerli, polygon, arbitrum, optimism, avalanche } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
@@ -65,6 +65,11 @@ const wagmiClient = createClient({
   provider
 })
 
+import '@rainbow-me/rainbowkit/styles.css';
+
+
+
+
 export default function RootLayout({
   children,
 }: {
@@ -75,10 +80,20 @@ export default function RootLayout({
       <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white
        ${font.className}`}>
         <WagmiConfig client={wagmiClient}>
-          <ClientOnly>
-            <Navbar />
-            {children}
-          </ClientOnly>
+          <RainbowKitProvider 
+          chains={chains}
+          modalSize="compact"
+          coolMode
+          showRecentTransactions={true}
+          theme={lightTheme({
+            accentColor: '#E2E2E2',
+            accentColorForeground: 'black',
+          })}>
+            <ClientOnly>
+              <Navbar />
+              {children}
+            </ClientOnly>
+          </RainbowKitProvider>
         </WagmiConfig>
       </body>
     </html>

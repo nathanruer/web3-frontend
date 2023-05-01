@@ -1,26 +1,14 @@
 'use client';
 
-import { useAccount, useSendTransaction } from 'wagmi'
+import { useAccount } from 'wagmi'
 import ConnectWalletButton from '../ConnectWalletButton';
 import Button from '../Button';
 
 const Claim = () => {
   const { address, isConnected } = useAccount()
-  const { sendTransaction } = useSendTransaction({
-    mode: 'recklesslyUnprepared',
-    request: {
-      to: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-      value:'1000000000000000000',
-    },
-  })
 
   async function handleClick() {
-    try {
-      const txHash = await sendTransaction()
-      console.log(`Transaction sent: ${txHash}`)
-    } catch (error) {
-      console.error(`Failed to send transaction: ${error}`)
-    }
+    console.log('clicked')
   }
 
   return (
