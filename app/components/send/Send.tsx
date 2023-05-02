@@ -5,6 +5,7 @@ import { useAccount, useSendTransaction, usePrepareSendTransaction, useWaitForTr
 import ConnectWalletButton from '../ConnectWalletButton';
 
 import Button from '../Button';
+import TransactionModal from '../modals/TransactionModal';
 
 const Send = () => {
   const [toAddress, setToAddress] = useState('');
@@ -56,12 +57,13 @@ const Send = () => {
               <ConnectWalletButton />
             )}
           </div>
-
-          {/* TODO: CREATE SENDING/SUCCESS MODALS */}
-          {isLoading && 'Sending'}
-          {isSuccess && 'Success'}
         </div>
       </div>
+
+      {/* TODO: CREATE SENDING/SUCCESS MODALS */}
+      {true && <TransactionModal label="Transaction successful"/>}
+      {isLoading && 'Sending'}
+      {isSuccess && 'Success'}
     </div>
   );
 };

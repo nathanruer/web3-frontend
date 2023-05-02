@@ -66,6 +66,7 @@ const wagmiClient = createClient({
 })
 
 import '@rainbow-me/rainbowkit/styles.css';
+import TransactionModal from './components/modals/TransactionModal';
 
 
 
@@ -77,7 +78,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white
+      <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white relative
        ${font.className}`}>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider 
