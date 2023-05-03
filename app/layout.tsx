@@ -78,7 +78,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white relative
+      <body className={`bg-gradient-to-r from-gray-900 to-gray-600 text-white
        ${font.className}`}>
         <WagmiConfig client={wagmiClient}>
           <RainbowKitProvider 
