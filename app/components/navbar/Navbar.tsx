@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { FaBars } from "react-icons/fa";
-import Logo from "./Logo";
+import Logo from "../Logo";
 import NavbarItem from "./NavbarItem";
 import ConnectWalletButton from "../ConnectWalletButton";
 import { IoMdClose } from "react-icons/io";
@@ -20,10 +20,8 @@ const Navbar = () => {
         <div className="flex flex-row justify-between items-center">
           <Logo />
           <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10">
-            <NavbarItem href="#about-us" label="About us" />
-            <NavbarItem href="#claim" label="Claim" />
-            <NavbarItem href="#tokenomics" label="Tokenomics" />
-            <NavbarItem href="#contact-us" label="Contact us" />
+            <NavbarItem href="about-me" label="About me"/>
+            <NavbarItem href="#send" label="Send" />
           </div>
           <ConnectWalletButton />
           <div className="md:hidden">
@@ -47,13 +45,9 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col">
                 <hr className="mb-6"></hr>
-                <NavbarItem href="#about-us" label="About us" mobile />
+                <NavbarItem href="#about-me" label="Send" mobile />
                 <hr className="my-6"></hr>
-                <NavbarItem href="#claim" label="Claim" mobile />
-                <hr className="my-6"></hr>
-                <NavbarItem href="#tokenomics" label="Tokenomics" mobile />
-                <hr className="my-6"></hr>
-                <NavbarItem href="#contact-us" label="Contact us" mobile />
+                <NavbarItem href="#send" label="Send" mobile />
                 <hr className="my-6"></hr>
               </div>
             </div>

@@ -1,11 +1,12 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAccount, useSendTransaction, usePrepareSendTransaction, useWaitForTransaction } from 'wagmi';
-import ConnectWalletButton from '../ConnectWalletButton';
+import ConnectWalletButton from '../components/ConnectWalletButton';
 
-import Button from '../Button';
-import TransactionModal from '../modals/TransactionModal';
-import Input from '../Input';
+import Button from '../components/Button';
+import TransactionModal from '../components/modals/TransactionModal';
+import Input from '../components/Input';
+import Heading from '../components/Heading';
 
 const Send = () => {
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
@@ -50,8 +51,13 @@ const Send = () => {
   }
 
   return (
-    <div className='p-5'>
-      <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 ">
+    <div id="send">
+      <Heading
+        title="Send"
+        subtitle="Send ETH or any native cryptocurrency to any address on any EVM network !" 
+      />
+      <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 
+      border shadow-md shadow-white">
         <div className='p-3 flex flex-col justify-center text-black'>
           <Input
             id= "Address"
