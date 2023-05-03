@@ -66,8 +66,6 @@ const wagmiClient = createClient({
 })
 
 import '@rainbow-me/rainbowkit/styles.css';
-import TransactionModal from './components/modals/TransactionModal';
-
 
 
 

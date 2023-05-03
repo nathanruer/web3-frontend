@@ -29,8 +29,8 @@ const Input: React.FC<InputProps> = ({
         id={id}
         placeholder={label}
         type={type}
-        className={`peer w-full p-2 mb-2 font-light 
-        bg-white border-2 rounded-md outline-none transition`}
+        className="w-full p-2 mb-2 font-light 
+        bg-white rounded-md"
         value={value}
         onChange={handleInputChange}
       />

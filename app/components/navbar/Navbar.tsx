@@ -7,6 +7,8 @@ import NavbarItem from "./NavbarItem";
 import ConnectWalletButton from "../ConnectWalletButton";
 import { IoMdClose } from "react-icons/io";
 
+import { links } from "@/data/constants";
+
 const Navbar = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -19,11 +21,17 @@ const Navbar = () => {
       <div className="max-w-[2520px] mx-auto px-10">
         <div className="flex flex-row justify-between items-center">
           <Logo />
-          <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10">
-            <NavbarItem href="about-me" label="About me"/>
-            <NavbarItem href="#send" label="Send" />
+          
+          <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10"> 
+            {links.map((item) => (
+              <>
+                <NavbarItem href={item.href} label={item.label}/>
+              </>
+            ))}
           </div>
+
           <ConnectWalletButton />
+          
           <div className="md:hidden">
             <FaBars onClick={toggleMenu} color="white" 
             className="hover:scale-110 transition hover:opacity-80" />
@@ -44,11 +52,12 @@ const Navbar = () => {
                 className="hover:scale-110 transition hover:opacity-80"/>
               </div>
               <div className="flex flex-col">
-                <hr className="mb-6"></hr>
-                <NavbarItem href="#about-me" label="Send" mobile />
-                <hr className="my-6"></hr>
-                <NavbarItem href="#send" label="Send" mobile />
-                <hr className="my-6"></hr>
+                {links.map((item) => (
+                <>
+                  <NavbarItem href={item.href} label={item.label} mobile onClick={toggleMenu}/>
+                  <hr className="my-6"/>
+                </>
+                ))}
               </div>
             </div>
           </div>
