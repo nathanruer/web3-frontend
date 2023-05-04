@@ -25,7 +25,10 @@ const Navbar = () => {
           <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10"> 
             {links.map((item) => (
               <>
-                <NavbarItem href={item.href} label={item.label}/>
+                <NavbarItem 
+                  href={item.href} 
+                  label={item.label}
+                />
               </>
             ))}
           </div>
@@ -40,7 +43,7 @@ const Navbar = () => {
       </div>
       
       {showSidebar && (
-        <div className="md:hidden flex overflow-x-hidden overflow-y-auto 
+        <div className="md:hidden flex overflow-x-hidden overflow-y-auto
         fixed inset-0 z-50 outline-none focus:outline-none bg-neutral-800/70">
           <div className="bg-gradient-to-b from-gray-900 to-gray-600 shadow-xl
           fixed top-0 right-0 h-full w-3/5 overflow-auto">
@@ -54,7 +57,12 @@ const Navbar = () => {
               <div className="flex flex-col">
                 {links.map((item) => (
                 <>
-                  <NavbarItem href={item.href} label={item.label} mobile onClick={toggleMenu}/>
+                  <NavbarItem 
+                    href={item.href} 
+                    label={item.label} 
+                    mobile 
+                    onClick={toggleMenu}
+                  />
                   <hr className="my-6"/>
                 </>
                 ))}

@@ -9,7 +9,7 @@ import ClientOnly from './components/ClientOnly';
 
 const font = Roboto({
   subsets: ["latin"],
-  weight: "700",
+  weight: "500",
 });
 
 export const metadata = {

@@ -88,12 +88,14 @@ const Send = () => {
           isLoading 
           label={`${data?.hash}`} 
           onClose={() => setIsLoadingModalOpen(false)} 
-        />}
+        />
+      }
       {isSuccessModalOpen && isSuccess && 
         <TransactionModal
           label={`${data?.hash}`} 
           onClose={() => setIsSuccessModalOpen(false)} 
-        />}
+        />
+      }
     </div>
   );
 };
