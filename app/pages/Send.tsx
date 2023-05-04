@@ -59,7 +59,6 @@ const Send = () => {
     }
   }
 
-
   return (
     <div id="send">
       <Heading

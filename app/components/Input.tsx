@@ -16,12 +16,6 @@ const Input: React.FC<InputProps> = ({
   value,
   onChange
 }) => {
-  const [isFilled, setIsFilled] = useState(false);
-
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onChange(event);
-    setIsFilled(event.target.value !== '');
-  };
 
   return (
     <div className="w-full relative">
@@ -32,7 +26,7 @@ const Input: React.FC<InputProps> = ({
         className="w-full p-2 mb-2 font-light 
         bg-white rounded-md"
         value={value}
-        onChange={handleInputChange}
+        onChange={onChange}
       />
     </div>
    );

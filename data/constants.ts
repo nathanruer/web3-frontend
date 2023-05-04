@@ -11,5 +11,9 @@ export const links = [
   {
     label: 'Send',
     href: '#send'
+  },
+  {
+    label: 'Read',
+    href: '#read'
   }
 ]
