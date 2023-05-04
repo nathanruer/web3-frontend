@@ -11,6 +11,7 @@ import Heading from '../components/Heading';
 const Send = () => {
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
 
   const { address, isConnected } = useAccount();
 
@@ -24,7 +25,7 @@ const Send = () => {
       value: weiValue,
     },
   })
-  const { data, sendTransaction = () => Promise.resolve() } = useSendTransaction(config);
+  const { data, sendTransaction = () => Promise.resolve(), error } = useSendTransaction(config);
 
   const { isLoading, isSuccess } = useWaitForTransaction({hash: data?.hash,})
 
@@ -41,6 +42,14 @@ const Send = () => {
       }, 10000);
     }
   }, [isSuccess]);
+  useEffect(() => {
+    if (error) {
+      setIsErrorModalOpen(true);
+      setTimeout(() => {
+        setIsErrorModalOpen(false);
+      }, 10000);
+    }
+  }, [error]);
 
   async function handleClick() {
     try {
@@ -49,6 +58,7 @@ const Send = () => {
       console.error(`Failed to send transaction: ${error}`);
     }
   }
+
 
   return (
     <div id="send">
@@ -86,14 +96,27 @@ const Send = () => {
       {isLoadingModalOpen && isLoading && 
         <TransactionModal
           isLoading 
-          label={`${data?.hash}`} 
+          bgColor="white"
+          textColor="gray-900"
           onClose={() => setIsLoadingModalOpen(false)} 
         />
       }
       {isSuccessModalOpen && isSuccess && 
         <TransactionModal
+          isSuccess
+          bgColor="green-400"
+          textColor="white"
           label={`${data?.hash}`} 
           onClose={() => setIsSuccessModalOpen(false)} 
+        />
+      }
+      {isErrorModalOpen && error &&
+        <TransactionModal
+          bgColor="red-400"
+          textColor="white"
+          isError
+          label={`${error}`}
+          onClose={() => setIsErrorModalOpen(false)} 
         />
       }
     </div>
