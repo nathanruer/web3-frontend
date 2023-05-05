@@ -38,7 +38,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
               {label && (
                 <p>
                   <a
-                    href={`https://etherscan.io/tx/${label}`}
+                    href={`https://goerli.etherscan.io/tx/${label}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="underline hover:text-white/70 transition"

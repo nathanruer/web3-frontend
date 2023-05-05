@@ -22,6 +22,7 @@ const AboutMe = () => {
           gap-x-10 gap-y-4">
             <TechnoItem src="../nextjs.png" label="Next.js 13" />
             <TechnoItem src="../hardhat.png" label="Hardhat" />
+            <TechnoItem src="../ethers.png" label="ethers.js" />
             <TechnoItem src="../wagmi.png" label="Wagmi hooks" />
             <TechnoItem src="../tailwind.png" label="Tailwind CSS" />
           </div>

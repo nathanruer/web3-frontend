@@ -27,7 +27,7 @@ const Send = () => {
   })
   const { data, sendTransaction = () => Promise.resolve(), error } = useSendTransaction(config);
 
-  const { isLoading, isSuccess } = useWaitForTransaction({hash: data?.hash,})
+  const { isLoading, isSuccess, isError } = useWaitForTransaction({hash: data?.hash,})
 
   useEffect(() => {
     if (isLoading) {
@@ -43,13 +43,13 @@ const Send = () => {
     }
   }, [isSuccess]);
   useEffect(() => {
-    if (error) {
+    if (error || isError) {
       setIsErrorModalOpen(true);
       setTimeout(() => {
         setIsErrorModalOpen(false);
       }, 10000);
     }
-  }, [error]);
+  }, [error, isError]);
 
   async function handleClick() {
     try {
@@ -109,7 +109,7 @@ const Send = () => {
           onClose={() => setIsSuccessModalOpen(false)} 
         />
       }
-      {isErrorModalOpen && error &&
+      {isErrorModalOpen && (error || isError) &&
         <TransactionModal
           bgColor="red-400"
           textColor="white"

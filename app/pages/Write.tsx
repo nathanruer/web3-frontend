@@ -1,15 +1,21 @@
 'use client';
 
-import { useContractWrite, usePrepareContractWrite } from 'wagmi'
+import { useState, useEffect } from 'react';
+
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
 
 import { SetGetNumber_contractABI, SetGetNumber_contractAddress } from '@/data/constants';
 
 import Heading from '../components/Heading';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import { useState } from 'react';
+import TransactionModal from '../components/modals/TransactionModal';
 
 const Write = () => {
+  const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
   const [inputValue, setInputValue] = useState('');
 
   const { config } = usePrepareContractWrite({
@@ -18,7 +24,30 @@ const Write = () => {
     functionName: 'setNumber',
     args: [inputValue],
   })
-  const { data, isLoading, isSuccess, write } = useContractWrite(config)
+  const { data, write, error } = useContractWrite(config)
+  const { isLoading, isSuccess, isError } = useWaitForTransaction({hash: data?.hash,})
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsLoadingModalOpen(true);
+    }
+  }, [isLoading]);
+  useEffect(() => {
+    if (isSuccess) {
+      setIsSuccessModalOpen(true);
+      setTimeout(() => {
+        setIsSuccessModalOpen(false);
+      }, 10000);
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (error || isError) {
+      setIsErrorModalOpen(true);
+      setTimeout(() => {
+        setIsErrorModalOpen(false);
+      }, 10000);
+    }
+  }, [error, isError]);
 
   async function handleClick() {
     try {
@@ -54,6 +83,32 @@ const Write = () => {
           </div>
         </div>
       </div>
+      {isLoadingModalOpen && isLoading && 
+        <TransactionModal
+          isLoading 
+          bgColor="white"
+          textColor="gray-900"
+          onClose={() => setIsLoadingModalOpen(false)} 
+        />
+      }
+      {isSuccessModalOpen && isSuccess && 
+        <TransactionModal
+          isSuccess
+          bgColor="green-400"
+          textColor="white"
+          label={`${data?.hash}`} 
+          onClose={() => setIsSuccessModalOpen(false)} 
+        />
+      }
+      {isErrorModalOpen && (error || isError) &&
+        <TransactionModal
+          bgColor="red-400"
+          textColor="white"
+          isError
+          label={`${error}`}
+          onClose={() => setIsErrorModalOpen(false)} 
+        />
+      }
     </div>
   );
 };
