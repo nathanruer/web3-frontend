@@ -24,12 +24,13 @@ const Navbar = () => {
           
           <div className="hidden md:flex flex-row justify-center md:gap-5 lg:gap-10"> 
             {links.map((item) => (
-              <>
+              <div key={item.label}>
                 <NavbarItem 
+                  key={item.label}
                   href={item.href} 
                   label={item.label}
                 />
-              </>
+              </div>
             ))}
           </div>
 
@@ -56,15 +57,16 @@ const Navbar = () => {
               </div>
               <div className="flex flex-col">
                 {links.map((item) => (
-                <>
-                  <NavbarItem 
-                    href={item.href} 
-                    label={item.label} 
-                    mobile 
-                    onClick={toggleMenu}
-                  />
-                  <hr className="my-6"/>
-                </>
+                  <div key={item.label}>
+                    <NavbarItem 
+                      key={item.label}
+                      href={item.href} 
+                      label={item.label} 
+                      mobile 
+                      onClick={toggleMenu}
+                    />
+                    <hr className="my-6"/>
+                  </div>
                 ))}
               </div>
             </div>
