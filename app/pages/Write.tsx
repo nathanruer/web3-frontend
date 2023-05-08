@@ -73,7 +73,7 @@ const Write = () => {
     <div id="write">
       <Heading
         title="Write in a smart contract"
-        subtitle="Calling a smart contract write-only method" 
+        subtitle="Calling a smart contract write-only method (only on Goerli)" 
       />
 
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 
@@ -90,7 +90,7 @@ const Write = () => {
           <div className='flex justify-center'>
             {isConnected ? (
               chain?.name === 'Goerli' ? (
-                <Button label='Send' onClick={handleClick} />
+                <Button label='Set number' onClick={handleClick} />
               ) : (
                 <Button label='Switch to Goerli' onClick={handleSwitchToGoerli} />
               )

@@ -13,7 +13,15 @@ export const links = [
     href: '#send'
   },
   {
+    label: 'Write',
+    href: '#write'
+  },
+  {
     label: 'Read',
     href: '#read'
+  },
+  {
+    label: 'Swap',
+    href: '#swap'
   }
 ]
