@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from 'react';
 
-import { useContractWrite, usePrepareContractWrite, useWaitForTransaction } from 'wagmi'
+import { useContractWrite, usePrepareContractWrite, useWaitForTransaction, 
+  useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import ConnectWalletButton from '../components/ConnectWalletButton';
 
 import { SetGetNumber_contractABI, SetGetNumber_contractAddress } from '@/data/constants';
 
@@ -15,6 +17,10 @@ const Write = () => {
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+
+  const { address, isConnected } = useAccount();
+  const { chain, chains } = useNetwork()
+  const { pendingChainId, switchNetwork } = useSwitchNetwork()
 
   const [inputValue, setInputValue] = useState('');
 
@@ -51,13 +57,16 @@ const Write = () => {
 
   async function handleClick() {
     try {
-      console.log('clicked')
       if (write) {
         write();
       }
     } catch (error) {
       console.error(`Failed to send transaction: ${error}`);
     }
+  }
+
+  function handleSwitchToGoerli() {
+    switchNetwork?.(5)
   }
   
   return (
@@ -79,7 +88,15 @@ const Write = () => {
           />
 
           <div className='flex justify-center'>
-            <Button label='Write' onClick={handleClick} />
+            {isConnected ? (
+              chain?.name === 'Goerli' ? (
+                <Button label='Send' onClick={handleClick} />
+              ) : (
+                <Button label='Switch to Goerli' onClick={handleSwitchToGoerli} />
+              )
+            ) : (
+              <ConnectWalletButton />
+            )}
           </div>
         </div>
       </div>
