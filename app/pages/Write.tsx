@@ -22,7 +22,7 @@ const Write = () => {
   const { chain, chains } = useNetwork()
   const { pendingChainId, switchNetwork } = useSwitchNetwork()
 
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState('10');
 
   const { config } = usePrepareContractWrite({
     address: SetGetNumber_contractAddress,
@@ -30,7 +30,7 @@ const Write = () => {
     functionName: 'setNumber',
     args: [inputValue],
   })
-  const { data, write, error } = useContractWrite(config)
+  const { data, write, error } = useContractWrite(config || {})
   const { isLoading, isSuccess, isError } = useWaitForTransaction({hash: data?.hash,})
 
   useEffect(() => {

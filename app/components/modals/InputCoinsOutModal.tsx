@@ -1,15 +1,15 @@
 'use client';
 
-import useInputCoinsModal from "@/app/hooks/useInputCoinsModal";
+import useInputCoinsModal from "@/app/hooks/useInputCoinsOutModal";
 import Modal from "./Modal";
 import { coins } from "@/data/constants";
 
-interface InputCoinsModalProps {
+interface InputCoinsOutModalProps {
   onSelectTokenLabel: (token: string) => void;
   onSelectTokenAddress: (token: string) => void;
 }
 
-const InputCoinsModal = ({ onSelectTokenLabel, onSelectTokenAddress }: InputCoinsModalProps) => {
+const InputCoinsOutModal = ({ onSelectTokenLabel, onSelectTokenAddress }: InputCoinsOutModalProps) => {
   const inputCoinsModal = useInputCoinsModal();
 
   const handleSelectToken = (token: string, address: string) => {
@@ -44,4 +44,4 @@ const InputCoinsModal = ({ onSelectTokenLabel, onSelectTokenAddress }: InputCoin
   );
 };
 
-export default InputCoinsModal;
+export default InputCoinsOutModal;
