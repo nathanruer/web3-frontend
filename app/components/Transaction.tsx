@@ -1,10 +1,10 @@
 'use client';
 
-import Loader from "../Loader";
+import Loader from "./Loader";
 
 import { FaTimes } from 'react-icons/fa';
 
-interface TransactionModalProps {
+interface TransactionProps {
   isLoading?: boolean;
   isSuccess?: boolean;
   isError?: boolean;
@@ -14,7 +14,7 @@ interface TransactionModalProps {
   onClose: () => void;
 }
 
-const TransactionModal: React.FC<TransactionModalProps> = ({
+const Transaction: React.FC<TransactionProps> = ({
   isLoading,
   isSuccess,
   isError,
@@ -61,4 +61,4 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   );
 };
 
-export default TransactionModal
+export default Transaction;

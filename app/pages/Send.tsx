@@ -5,7 +5,7 @@ import { useAccount, useSendTransaction, usePrepareSendTransaction, useWaitForTr
 import ConnectWalletButton from '../components/ConnectWalletButton';
 
 import Button from '../components/Button';
-import TransactionModal from '../components/modals/TransactionModal';
+import Transaction from '../components/Transaction';
 import Input from '../components/Input';
 import Heading from '../components/Heading';
 
@@ -94,7 +94,7 @@ const Send = () => {
       </div>
 
       {isLoadingModalOpen && isLoading && 
-        <TransactionModal
+        <Transaction
           isLoading 
           bgColor="white"
           textColor="gray-900"
@@ -102,7 +102,7 @@ const Send = () => {
         />
       }
       {isSuccessModalOpen && isSuccess && 
-        <TransactionModal
+        <Transaction
           isSuccess
           bgColor="green-400"
           textColor="white"
@@ -111,7 +111,7 @@ const Send = () => {
         />
       }
       {isErrorModalOpen && (error || isError) &&
-        <TransactionModal
+        <Transaction
           bgColor="red-400"
           textColor="white"
           isError

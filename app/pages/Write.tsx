@@ -11,7 +11,7 @@ import { SetGetNumber_contractABI, SetGetNumber_contractAddress } from '@/data/c
 import Heading from '../components/Heading';
 import Input from '../components/Input';
 import Button from '../components/Button';
-import TransactionModal from '../components/modals/TransactionModal';
+import Transaction from '../components/Transaction';
 
 const Write = () => {
   const [isLoadingModalOpen, setIsLoadingModalOpen] = useState(false);
@@ -101,7 +101,7 @@ const Write = () => {
         </div>
       </div>
       {isLoadingModalOpen && isLoading && 
-        <TransactionModal
+        <Transaction
           isLoading 
           bgColor="white"
           textColor="gray-900"
@@ -109,7 +109,7 @@ const Write = () => {
         />
       }
       {isSuccessModalOpen && isSuccess && 
-        <TransactionModal
+        <Transaction
           isSuccess
           bgColor="green-400"
           textColor="white"
@@ -118,7 +118,7 @@ const Write = () => {
         />
       }
       {isErrorModalOpen && (error || isError) &&
-        <TransactionModal
+        <Transaction
           bgColor="red-400"
           textColor="white"
           isError

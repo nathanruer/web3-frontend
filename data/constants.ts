@@ -25,3 +25,14 @@ export const links = [
     href: '#swap'
   }
 ]
+
+export const coins = [
+  {
+    label: 'AAVE',
+    address: '0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9'
+  },
+  {
+    label: 'FXS',
+    address: '0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0'
+  }
+]
