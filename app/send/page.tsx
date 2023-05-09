@@ -61,7 +61,7 @@ const Send = () => {
   }
 
   return (
-    <div id="send">
+    <div>
       <Heading
         title="Send"
         subtitle="Send ETH or any native cryptocurrency to any address on any EVM network !" 

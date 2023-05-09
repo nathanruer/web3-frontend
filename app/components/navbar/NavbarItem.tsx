@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 interface NavbarItemProps {
@@ -15,26 +16,11 @@ const NavbarItem: React.FC<NavbarItemProps> = ({
   href,
   onClick
 }) => {
-  
-  const handleClick = async () => {
-    const target = document.querySelector(href);
-    
-    if (target) {
-      window.scrollTo({
-        top: target.getBoundingClientRect().top + window.pageYOffset,
-        behavior: 'smooth'
-      });
-    }
-  };
+  const router = useRouter();
 
   return ( 
     <div 
-      onClick={() => {
-        handleClick();
-        if (onClick) {
-          onClick();
-        }
-      }}
+      onClick={() => router.push(`${href}`)}
       className={`text-white cursor-pointer hover:opacity-80 
         ${mobile ? '' : 'hover:scale-110 transition duration-300 ease-in-out'}
       `}

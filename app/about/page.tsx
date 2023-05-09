@@ -3,13 +3,11 @@
 import Heading from '../components/Heading';
 import TechnoItem from '../components/aboutMe/TechnoItem';
 
-import { FaReact } from "react-icons/fa"
-
-const AboutMe = () => {
+const About = () => {
   return (
-    <div id="about-me">
+    <div>
       <Heading
-        title="About me"
+        title="About"
         subtitle="Currently learning full stack blockchain development"
       />
 
@@ -32,4 +30,4 @@ const AboutMe = () => {
   );
 };
 
-export default AboutMe;
+export default About;

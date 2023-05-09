@@ -8,8 +8,11 @@ import ConnectWalletButton from "../ConnectWalletButton";
 import { IoMdClose } from "react-icons/io";
 
 import { links } from "@/data/constants";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
+  const router = useRouter();
+
   const [showSidebar, setShowSidebar] = useState(false);
 
   const toggleMenu = () => {

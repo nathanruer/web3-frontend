@@ -10,7 +10,7 @@ const Heading: React.FC<HeadingProps> = ({
   subtitle,
 }) => {
   return (
-    <div className="pt-20 pb-10 lg:px-40 px-10">
+    <div className="p-10 lg:px-40">
       <p className="text-6xl font-bold text-center">
         {title}
       </p>

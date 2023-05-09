@@ -66,6 +66,7 @@ const wagmiClient = createClient({
 })
 
 import '@rainbow-me/rainbowkit/styles.css';
+import Footer from './components/Footer';
 
 
 export default function RootLayout({
@@ -90,6 +91,7 @@ export default function RootLayout({
             <ClientOnly>
               <Navbar />
               {children}
+              <Footer />
             </ClientOnly>
           </RainbowKitProvider>
         </WagmiConfig>

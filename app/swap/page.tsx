@@ -13,15 +13,15 @@ import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
 
 const Swap = () => {
-  const inputCoinsInModal = useInputCoinsInModal();
-  const inputCoinsOutModal = useInputCoinsOutModal();
+  const { address, isConnected } = useAccount();
+  const { chain, chains } = useNetwork()
+  const { pendingChainId, switchNetwork } = useSwitchNetwork()
 
   const [isInputInFocused, setIsInputInFocused] = useState(false);
   const [isInputOutFocused, setIsInputOutFocused] = useState(false);
 
-  const { address, isConnected } = useAccount();
-  const { chain, chains } = useNetwork()
-  const { pendingChainId, switchNetwork } = useSwitchNetwork()
+  const inputCoinsInModal = useInputCoinsInModal();
+  const inputCoinsOutModal = useInputCoinsOutModal();
 
   const [tokenInLabel, setTokenInLabel] = useState("ETH");
   const [tokenInAddress, setTokenInAddress] = useState("0x0")
@@ -42,7 +42,7 @@ const Swap = () => {
   }
 
   return (
-    <div id="swap">
+    <div>
       <Heading  
         title="Swap"
         subtitle="Swap ERC20 tokens using Uniswap V3 (only on Mainnet localhost)"
@@ -51,9 +51,9 @@ const Swap = () => {
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 border
       shadow-md shadow-white">
 
-        <div className={`p-3 flex flex-col justify-center text-black 
-        rounded-xl hover:border hover:-border-white
-        ${isInputInFocused ? 'border border-white' : ''}`}>
+        <div className={`p-3 flex flex-col justify-center text-black  mb-2
+        rounded-xl hover:border
+        ${isInputInFocused ? 'border ' : ''}`}>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -74,9 +74,9 @@ const Swap = () => {
           </div>
         </div>
 
-        <div className={`p-3 flex flex-col justify-center text-black 
-        rounded-xl hover:border hover:-border-white
-        ${isInputOutFocused ? 'border border-white' : ''}`}>
+        <div className={`p-3 flex flex-col justify-center text-black mb-2
+        rounded-xl hover:border 
+        ${isInputOutFocused ? 'border' : ''}`}>
           <div className="flex items-center gap-2">
             <input
               type="number"
@@ -97,7 +97,7 @@ const Swap = () => {
           </div>
         </div>
 
-        <div className='flex justify-center pt-4'>
+        <div className='flex justify-center'>
             {isConnected ? (
               chain?.name === 'Localhost' || 'Mainnet' ? (
                 <Button label='Swap' onClick={handleClick} />

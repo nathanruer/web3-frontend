@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { ethers } from 'ethers';
 
@@ -20,18 +22,18 @@ const Read = () => {
   }
 
   return (
-    <div id="read">
+    <div>
       <Heading
         title="Read a smart contract"
         subtitle="Calling a smart contract read-only method"
       />
 
-      <div className="flex flex-col w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3">
+      <div className="flex flex-col w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold">
         <div className='flex justify-center'>
           <Button label="Get number" onClick={handleClick} />
         </div>
 
-        <div className='flex justify-center pt-3'>
+        <div className='flex justify-center pt-3 font-light'>
           {number && <p>Number: {number}</p>}
         </div>
       </div>

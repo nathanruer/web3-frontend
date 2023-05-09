@@ -5,24 +5,20 @@ export const SetGetNumber_contractABI = abi.abi;
 
 export const links = [
   {
-    label: 'About me',
-    href: '#about-me'
-  },
-  {
     label: 'Send',
-    href: '#send'
+    href: 'send'
   },
   {
     label: 'Write',
-    href: '#write'
+    href: 'write'
   },
   {
     label: 'Read',
-    href: '#read'
+    href: 'read'
   },
   {
     label: 'Swap',
-    href: '#swap'
+    href: 'swap'
   }
 ]
 

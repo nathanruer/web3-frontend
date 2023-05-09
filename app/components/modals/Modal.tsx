@@ -54,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({
             <div className="translate h-full lg:h-auto md:h-auto
             border-0 rounded-lg shadow-lg relative flex flex-col 
             w-full outline-none focus:outline-none
-            bg-gray-900">
+            bg-gradient-to-l from-gray-900 to-gray-600">
 
               <div className="flex items-center p-6 rounded-t
               justify-center relative">

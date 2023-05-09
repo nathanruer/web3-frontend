@@ -70,7 +70,7 @@ const Write = () => {
   }
   
   return (
-    <div id="write">
+    <div>
       <Heading
         title="Write in a smart contract"
         subtitle="Calling a smart contract write-only method (only on Goerli)" 
