@@ -3,15 +3,16 @@ import { useState } from "react";
 
 import { useAccount, useNetwork, useSwitchNetwork, useBalance } from 'wagmi'
 import ConnectWalletButton from '../components/ConnectWalletButton';
-import { ethers } from 'ethers';
-import QuoterAbi from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 
 import useInputCoinsInModal from "../hooks/useInputCoinsInModal";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
+import Loader from "../components/Loader";
 import useInputCoinsOutModal from "../hooks/useInputCoinsOutModal";
 import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
+
+import { quoteAmount } from "../hooks/quoteAmount";
 
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 
@@ -28,11 +29,12 @@ const Swap = () => {
 
   const [tokenInLabel, setTokenInLabel] = useState("ETH");
   const [tokenInAddress, setTokenInAddress] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
-  const [tokenOutLabel, setTokenOutLabel] = useState("USDC");
-  const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
-  const [amountIn, setAmountIn] = useState("1");
+  const [tokenOutLabel, setTokenOutLabel] = useState("UNI");
+  const [tokenOutAddress, setTokenOutAddress] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984")
+  const [amountIn, setAmountIn] = useState("");
   const [amountOut, setAmountOut] = useState("");
-  const [isAmountOutLoading, setisAmountOutLoading] = useState(false);
+  const [isAmountInLoading, setIsAmountInLoading] = useState(false);
+  const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
 
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   const handleSelectTokenInAddress = (tokenAddress: string) => {setTokenInAddress(tokenAddress)};
@@ -47,26 +49,6 @@ const Swap = () => {
     address: address,
     token: `0x${tokenOutAddress.slice(2)}`,
   });
-
-  const quoteAmount = async (tokenInAddress:string, tokenOutAddress:string, amountIn:string) => {
-    setisAmountOutLoading(true)
-    const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_MAINNET)
-    const quoterContract = new ethers.Contract(
-      '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', 
-      QuoterAbi.abi,
-      provider
-    );
-    const amountOut = await quoterContract.callStatic.quoteExactInputSingle(
-      tokenInAddress,
-      tokenOutAddress,
-      '3000',
-      ethers.utils.parseEther(amountIn),
-      '0',
-    )
-    // TO DO : FORMAT DEPENDING ON TOKEN OUT DECIMAL
-    setAmountOut(ethers.utils.formatUnits(amountOut.toString(), 6))
-    setisAmountOutLoading(false)
-  }
   
   function handleSwitchToLocalhost() {switchNetwork?.(3137)};
 
@@ -74,11 +56,42 @@ const Swap = () => {
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
   }
 
-  async function handleAmountInChanged(e:string) {
+  async function handleAmountInChanged(e: string) {
     setAmountIn(e);
-    quoteAmount(tokenInAddress, tokenOutAddress, e);
+
+    if (e === '') {
+      setAmountOut('');
+      return;
+    } else if (e === '0') {
+      setAmountOut('0');
+      return;
+    }
+  
+    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
+    setIsAmountOutLoading(true);
+    const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
+    setAmountOut(amountOut);
+    setIsAmountOutLoading(false);
   }
 
+  async function handleAmountOutChanged(e: string) {
+    setAmountOut(e);
+
+    if (e === '') {
+      setAmountIn('');
+      return;
+    } else if (e === '0') {
+      setAmountIn('0');
+      return;
+    }
+  
+    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
+    setIsAmountInLoading(true);
+    const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
+    setAmountIn(amountIn);
+    setIsAmountInLoading(false);
+  }
+  
   return (
     <div>
       <Heading  
@@ -93,6 +106,9 @@ const Swap = () => {
         rounded-xl hover:border
         ${isInputInFocused ? 'border ' : ''}`}>
           <div className="flex items-center gap-2">
+            {isAmountInLoading ?
+            ( <div className="w-full p-2 rounded-xl bg-transparent text-white"><Loader color="white"/></div> )
+            : ( 
             <input
               type="number"
               placeholder="10"
@@ -101,7 +117,7 @@ const Swap = () => {
               onBlur={() => setIsInputInFocused(false)}
               onChange={(e) => handleAmountInChanged(e.target.value)}
               className="w-full p-2 rounded-xl bg-transparent text-white"
-            />
+            />)}
             <button
               onClick={inputCoinsInModal.onOpen}
               className="flex w-[220px] text-black bg-white py-2 px-4 hover:bg-white/80 
@@ -110,7 +126,7 @@ const Swap = () => {
               {tokenInLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
-          <div className="flex text-align p-1 text-gray-400 font-light text-sm">
+          <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
             {isTokenInBalanceLoading ? (
               <p>Balance fetching...</p>
             ) : (
@@ -124,14 +140,15 @@ const Swap = () => {
         ${isInputOutFocused ? 'border' : ''}`}>
           <div className="flex items-center gap-2">
             {isAmountOutLoading ?
-            ( <p className="w-full p-2 rounded-xl bg-transparent text-white">Loading...</p> )
+            ( <div className="w-full p-2 rounded-xl bg-transparent text-white"><Loader color="white"/></div> )
             : ( 
             <input
               type="number"
               value={amountOut}
+              placeholder="10"
               onFocus={() => setIsInputOutFocused(true)}
               onBlur={() => setIsInputOutFocused(false)}
-              onChange={(e) => setAmountOut(e.target.value)}
+              onChange={(e) => handleAmountOutChanged(e.target.value)}
               className="w-full p-2 rounded-xl bg-transparent text-white"
             />)}
 
@@ -143,7 +160,7 @@ const Swap = () => {
               {tokenOutLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
-          <div className="flex text-align p-1 text-gray-400 font-light text-sm">
+          <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
             {isTokenOutBalanceLoading ? (
               <p>Balance fetching...</p>
             ) : (

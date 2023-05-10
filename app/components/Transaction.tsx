@@ -28,7 +28,7 @@ const Transaction: React.FC<TransactionProps> = ({
     gap-3 bg-${bgColor} text-${textColor} max-w-[75%] lg:max-w-[25%] `}>
         {isLoading &&
           <div className="flex flex-row items-center gap-1">
-            <Loader />
+            <Loader color="black"/>
             <p>Transaction loading...</p>
           </div>
         }
