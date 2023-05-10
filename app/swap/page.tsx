@@ -18,8 +18,8 @@ import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 
 const Swap = () => {
   const { address, isConnected } = useAccount();
-  const { chain, chains } = useNetwork()
-  const { pendingChainId, switchNetwork } = useSwitchNetwork()
+  const { chain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
 
   const [isInputInFocused, setIsInputInFocused] = useState(false);
   const [isInputOutFocused, setIsInputOutFocused] = useState(false);
@@ -27,19 +27,34 @@ const Swap = () => {
   const inputCoinsInModal = useInputCoinsInModal();
   const inputCoinsOutModal = useInputCoinsOutModal();
 
-  const [tokenInLabel, setTokenInLabel] = useState("ETH");
+  const [tokenInLabel, setTokenInLabel] = useState("WETH");
   const [tokenInAddress, setTokenInAddress] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
-  const [tokenOutLabel, setTokenOutLabel] = useState("UNI");
-  const [tokenOutAddress, setTokenOutAddress] = useState("0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984")
-  const [amountIn, setAmountIn] = useState("");
+  const [tokenOutLabel, setTokenOutLabel] = useState("USDC");
+  const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+  const [amountIn, setAmountIn] = useState("1");
   const [amountOut, setAmountOut] = useState("");
   const [isAmountInLoading, setIsAmountInLoading] = useState(false);
   const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
 
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
-  const handleSelectTokenInAddress = (tokenAddress: string) => {setTokenInAddress(tokenAddress)};
+  async function handleSelectTokenInAddress(tokenAddress: string) {
+    setTokenInAddress(tokenAddress)
+    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
+    setIsAmountOutLoading(true);
+    const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
+    setAmountOut(amountOut);
+    setIsAmountOutLoading(false);
+  };
+
   const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
-  const handleSelectTokenOutAddress = (tokenAddress: string) => {setTokenOutAddress(tokenAddress)};
+  async function handleSelectTokenOutAddress (tokenAddress: string) {
+    setTokenOutAddress(tokenAddress)
+    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
+    setIsAmountOutLoading(true);
+    const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
+    setAmountOut(amountOut);
+    setIsAmountOutLoading(false);
+  };
 
   const { data: tokenInBalance, isLoading: isTokenInBalanceLoading } = useBalance({
     address: address,
@@ -111,7 +126,6 @@ const Swap = () => {
             : ( 
             <input
               type="number"
-              placeholder="10"
               value={amountIn}
               onFocus={() => setIsInputInFocused(true)}
               onBlur={() => setIsInputInFocused(false)}
@@ -145,7 +159,6 @@ const Swap = () => {
             <input
               type="number"
               value={amountOut}
-              placeholder="10"
               onFocus={() => setIsInputOutFocused(true)}
               onBlur={() => setIsInputOutFocused(false)}
               onChange={(e) => handleAmountOutChanged(e.target.value)}
@@ -174,7 +187,7 @@ const Swap = () => {
               chain?.name === 'Localhost' || 'Mainnet' ? (
                 <Button label='Swap' onClick={handleSwap} />
               ) : (
-                <Button label='Switch to Localhost or' onClick={handleSwitchToLocalhost} />
+                <Button label='Switch to Localhost or' onClick={() => switchNetwork?.(3137)} />
               )
             ) : (
               <ConnectWalletButton />

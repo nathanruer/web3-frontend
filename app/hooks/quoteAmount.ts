@@ -2,7 +2,11 @@ import { ethers } from 'ethers';
 import QuoterAbi from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 import { getTokenDecimals } from './getTokenDecimals';
 
-export const quoteAmount = async (tokenInAddress: string, tokenOutAddress: string, amountIn: string) => {
+export const quoteAmount = async (
+  tokenInAddress: string, 
+  tokenOutAddress: string, 
+  amountIn: string
+  ) => {
   const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_MAINNET);
   const quoterContract = new ethers.Contract(
     '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6',
