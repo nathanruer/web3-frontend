@@ -1,16 +1,19 @@
 'use client';
 import { useState } from "react";
 
-import { useAccount, useNetwork, useSwitchNetwork } from 'wagmi'
+import { useAccount, useNetwork, useSwitchNetwork, useBalance } from 'wagmi'
 import ConnectWalletButton from '../components/ConnectWalletButton';
+import { ethers } from 'ethers';
+import QuoterAbi from '@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json';
 
 import useInputCoinsInModal from "../hooks/useInputCoinsInModal";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
-import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 import useInputCoinsOutModal from "../hooks/useInputCoinsOutModal";
 import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
+
+import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 
 const Swap = () => {
   const { address, isConnected } = useAccount();
@@ -24,21 +27,56 @@ const Swap = () => {
   const inputCoinsOutModal = useInputCoinsOutModal();
 
   const [tokenInLabel, setTokenInLabel] = useState("ETH");
-  const [tokenInAddress, setTokenInAddress] = useState("0x0")
-  const [tokenOutLabel, setTokenOutLabel] = useState("Select token");
-  const [tokenOutAddress, setTokenOutAddress] = useState("")
-  const [amountIn, setAmountIn] = useState("");
+  const [tokenInAddress, setTokenInAddress] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
+  const [tokenOutLabel, setTokenOutLabel] = useState("USDC");
+  const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+  const [amountIn, setAmountIn] = useState("1");
   const [amountOut, setAmountOut] = useState("");
+  const [isAmountOutLoading, setisAmountOutLoading] = useState(false);
 
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   const handleSelectTokenInAddress = (tokenAddress: string) => {setTokenInAddress(tokenAddress)};
   const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
   const handleSelectTokenOutAddress = (tokenAddress: string) => {setTokenOutAddress(tokenAddress)};
 
+  const { data: tokenInBalance, isLoading: isTokenInBalanceLoading } = useBalance({
+    address: address,
+    token: `0x${tokenInAddress.slice(2)}`,
+  });
+  const { data: tokenOutBalance, isLoading: isTokenOutBalanceLoading } = useBalance({
+    address: address,
+    token: `0x${tokenOutAddress.slice(2)}`,
+  });
+
+  const quoteAmount = async (tokenInAddress:string, tokenOutAddress:string, amountIn:string) => {
+    setisAmountOutLoading(true)
+    const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_MAINNET)
+    const quoterContract = new ethers.Contract(
+      '0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6', 
+      QuoterAbi.abi,
+      provider
+    );
+    const amountOut = await quoterContract.callStatic.quoteExactInputSingle(
+      tokenInAddress,
+      tokenOutAddress,
+      '3000',
+      ethers.utils.parseEther(amountIn),
+      '0',
+    )
+    // TO DO : FORMAT DEPENDING ON TOKEN OUT DECIMAL
+    setAmountOut(ethers.utils.formatUnits(amountOut.toString(), 6))
+    setisAmountOutLoading(false)
+  }
+  
   function handleSwitchToLocalhost() {switchNetwork?.(3137)};
 
-  async function handleClick() {
+  async function handleSwap() {
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
+  }
+
+  async function handleAmountInChanged(e:string) {
+    setAmountIn(e);
+    quoteAmount(tokenInAddress, tokenOutAddress, e);
   }
 
   return (
@@ -61,7 +99,7 @@ const Swap = () => {
               value={amountIn}
               onFocus={() => setIsInputInFocused(true)}
               onBlur={() => setIsInputInFocused(false)}
-              onChange={(e) => setAmountIn(e.target.value)}
+              onChange={(e) => handleAmountInChanged(e.target.value)}
               className="w-full p-2 rounded-xl bg-transparent text-white"
             />
             <button
@@ -72,21 +110,31 @@ const Swap = () => {
               {tokenInLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
+          <div className="flex text-align p-1 text-gray-400 font-light text-sm">
+            {isTokenInBalanceLoading ? (
+              <p>Balance fetching...</p>
+            ) : (
+              <p>Balance: {tokenInBalance?.formatted ?? 0}</p>
+            )}
+          </div>
         </div>
 
         <div className={`p-3 flex flex-col justify-center text-black mb-2
         rounded-xl hover:border 
         ${isInputOutFocused ? 'border' : ''}`}>
           <div className="flex items-center gap-2">
+            {isAmountOutLoading ?
+            ( <p className="w-full p-2 rounded-xl bg-transparent text-white">Loading...</p> )
+            : ( 
             <input
               type="number"
-              placeholder="0"
               value={amountOut}
               onFocus={() => setIsInputOutFocused(true)}
               onBlur={() => setIsInputOutFocused(false)}
               onChange={(e) => setAmountOut(e.target.value)}
               className="w-full p-2 rounded-xl bg-transparent text-white"
-            />
+            />)}
+
             <button
               onClick={inputCoinsOutModal.onOpen}
               className="flex w-[220px] text-black bg-white py-2 px-4 hover:bg-white/80 
@@ -95,12 +143,19 @@ const Swap = () => {
               {tokenOutLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
+          <div className="flex text-align p-1 text-gray-400 font-light text-sm">
+            {isTokenOutBalanceLoading ? (
+              <p>Balance fetching...</p>
+            ) : (
+              <p>Balance: {tokenOutBalance?.formatted ?? 0}</p>
+            )}
+          </div>
         </div>
 
         <div className='flex justify-center'>
             {isConnected ? (
               chain?.name === 'Localhost' || 'Mainnet' ? (
-                <Button label='Swap' onClick={handleClick} />
+                <Button label='Swap' onClick={handleSwap} />
               ) : (
                 <Button label='Switch to Localhost or' onClick={handleSwitchToLocalhost} />
               )

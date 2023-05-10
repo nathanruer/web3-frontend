@@ -48,7 +48,7 @@ const localhostChain: Chain = {
 const { chains, provider } = configureChains(
   [mainnet, goerli, polygon, arbitrum, optimism, avalanche, localhostChain],
   [
-    alchemyProvider({ apiKey: process.env.ALCHEMY_ID as string }),
+    alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID as string }),
     publicProvider()
   ]
 );
