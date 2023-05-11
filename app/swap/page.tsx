@@ -39,7 +39,6 @@ const Swap = () => {
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   async function handleSelectTokenInAddress(tokenAddress: string) {
     setTokenInAddress(tokenAddress)
-    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
     setIsAmountOutLoading(true);
     const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
     setAmountOut(amountOut);
@@ -49,7 +48,6 @@ const Swap = () => {
   const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
   async function handleSelectTokenOutAddress (tokenAddress: string) {
     setTokenOutAddress(tokenAddress)
-    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
     setIsAmountOutLoading(true);
     const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
     setAmountOut(amountOut);
@@ -64,8 +62,6 @@ const Swap = () => {
     address: address,
     token: `0x${tokenOutAddress.slice(2)}`,
   });
-  
-  function handleSwitchToLocalhost() {switchNetwork?.(3137)};
 
   async function handleSwap() {
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
@@ -82,7 +78,6 @@ const Swap = () => {
       return;
     }
   
-    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
     setIsAmountOutLoading(true);
     const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
     setAmountOut(amountOut);
@@ -99,8 +94,7 @@ const Swap = () => {
       setAmountIn('0');
       return;
     }
-  
-    // TODO : VERIFY POOL EXISTS BEFORE FETCHING AMOUNT
+
     setIsAmountInLoading(true);
     const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
     setAmountIn(amountIn);
@@ -111,7 +105,7 @@ const Swap = () => {
     <div>
       <Heading  
         title="Swap"
-        subtitle="Swap ERC20 tokens using Uniswap V3 (only on Mainnet localhost)"
+        subtitle="Swap ERC20 tokens using Uniswap (only on Mainnet localhost)"
       />
       
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 border
@@ -142,6 +136,7 @@ const Swap = () => {
           </div>
           <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
             {isTokenInBalanceLoading ? (
+              // TO DO : VERIFIER QU'ON EST SUR MAINNET OU LOCALHOST POUR L'INSTANT
               <p>Balance fetching...</p>
             ) : (
               <p>Balance: {tokenInBalance?.formatted ?? 0}</p>
@@ -175,6 +170,7 @@ const Swap = () => {
           </div>
           <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
             {isTokenOutBalanceLoading ? (
+              // TO DO : VERIFIER QU'ON EST SUR MAINNET OU LOCALHOST POUR L'INSTANT
               <p>Balance fetching...</p>
             ) : (
               <p>Balance: {tokenOutBalance?.formatted ?? 0}</p>
