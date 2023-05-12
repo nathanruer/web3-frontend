@@ -18,9 +18,16 @@ const NavbarItem: React.FC<NavbarItemProps> = ({
 }) => {
   const router = useRouter();
 
+  function useOnClick(href:string) {
+    router.push(`${href}`);
+    if (onClick) {
+      onClick();
+    }
+  }
+
   return ( 
     <div 
-      onClick={() => router.push(`${href}`)}
+      onClick={() => useOnClick(href)}
       className={`text-white cursor-pointer hover:opacity-80 
         ${mobile ? '' : 'hover:scale-110 transition duration-300 ease-in-out'}
       `}

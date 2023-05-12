@@ -1,4 +1,5 @@
 'use client';
+
 import { useState } from "react";
 
 import { useAccount, useNetwork, useSwitchNetwork, useBalance } from 'wagmi'
@@ -15,6 +16,7 @@ import InputCoinsInModal from "../components/modals/InputCoinsInModal";
 import { quoteAmount } from "../hooks/quoteAmount";
 
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
+import Fetching from "../components/Fetching";
 
 const Swap = () => {
   const { address, isConnected } = useAccount();
@@ -38,21 +40,65 @@ const Swap = () => {
 
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   async function handleSelectTokenInAddress(tokenAddress: string) {
-    setTokenInAddress(tokenAddress)
-    setIsAmountOutLoading(true);
-    const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
-    setAmountOut(amountOut);
-    setIsAmountOutLoading(false);
-  };
-
+    try {
+      setTokenInAddress(tokenAddress);
+      setIsAmountOutLoading(true);
+      const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
+      setAmountOut(amountOut);
+      setIsAmountOutLoading(false);
+    } catch (error) {
+      console.error("Error while quoting amount out:", error);
+    }
+  }
   const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
-  async function handleSelectTokenOutAddress (tokenAddress: string) {
-    setTokenOutAddress(tokenAddress)
-    setIsAmountOutLoading(true);
-    const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
-    setAmountOut(amountOut);
-    setIsAmountOutLoading(false);
-  };
+  async function handleSelectTokenOutAddress(tokenAddress: string) {
+    try {
+      setTokenOutAddress(tokenAddress);
+      setIsAmountOutLoading(true);
+      const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
+      setAmountOut(amountOut);
+      setIsAmountOutLoading(false);
+    } catch (error) {
+      console.error("Error while quoting amount out:", error);
+    }
+  }
+
+  async function handleAmountInChanged(e: string) {
+    setAmountIn(e);
+    try {
+      if (e === '') {
+        setAmountOut('');
+        return;
+      } else if (e === '0') {
+        setAmountOut('0');
+        return;
+      }
+      setIsAmountOutLoading(true);
+      const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
+      setAmountOut(amountOut);
+      setIsAmountOutLoading(false);
+    } catch (error) {
+      console.error("Error while quoting amount out:", error);
+    }
+  }
+  async function handleAmountOutChanged(e: string) {
+    setAmountOut(e);
+    try {
+      if (e === '') {
+        setAmountIn('');
+        return;
+      } else if (e === '0') {
+        setAmountIn('0');
+        return;
+      }
+      setIsAmountInLoading(true);
+      const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
+      setAmountIn(amountIn);
+      setIsAmountInLoading(false);
+    } catch (error) {
+      console.error("Error while quoting amount out:", error);
+    }
+  }
 
   const { data: tokenInBalance, isLoading: isTokenInBalanceLoading } = useBalance({
     address: address,
@@ -64,53 +110,19 @@ const Swap = () => {
   });
 
   async function handleSwap() {
+    // TODO: CREATE THE REAL SWAP FUNCTION
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
-  }
-
-  async function handleAmountInChanged(e: string) {
-    setAmountIn(e);
-
-    if (e === '') {
-      setAmountOut('');
-      return;
-    } else if (e === '0') {
-      setAmountOut('0');
-      return;
-    }
-  
-    setIsAmountOutLoading(true);
-    const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
-    setAmountOut(amountOut);
-    setIsAmountOutLoading(false);
-  }
-
-  async function handleAmountOutChanged(e: string) {
-    setAmountOut(e);
-
-    if (e === '') {
-      setAmountIn('');
-      return;
-    } else if (e === '0') {
-      setAmountIn('0');
-      return;
-    }
-
-    setIsAmountInLoading(true);
-    const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
-    setAmountIn(amountIn);
-    setIsAmountInLoading(false);
   }
   
   return (
     <div>
       <Heading  
         title="Swap"
-        subtitle="Swap ERC20 tokens using Uniswap (only on Mainnet localhost)"
+        subtitle="Swap ERC20 tokens using Uniswap V2 (only on Mainnet for now)"
       />
       
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 border
       shadow-md shadow-white">
-
         <div className={`p-3 flex flex-col justify-center text-black  mb-2
         rounded-xl hover:border
         ${isInputInFocused ? 'border ' : ''}`}>
@@ -126,6 +138,7 @@ const Swap = () => {
               onChange={(e) => handleAmountInChanged(e.target.value)}
               className="w-full p-2 rounded-xl bg-transparent text-white"
             />)}
+            
             <button
               onClick={inputCoinsInModal.onOpen}
               className="flex w-[220px] text-black bg-white py-2 px-4 hover:bg-white/80 
@@ -135,12 +148,13 @@ const Swap = () => {
             </button>
           </div>
           <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
-            {isTokenInBalanceLoading ? (
-              // TO DO : VERIFIER QU'ON EST SUR MAINNET OU LOCALHOST POUR L'INSTANT
-              <p>Balance fetching...</p>
-            ) : (
-              <p>Balance: {tokenInBalance?.formatted ?? 0}</p>
-            )}
+            {isConnected && 
+              <Fetching 
+                isFetching={isTokenInBalanceLoading}
+                fetchingLabel="Balance fetching..."
+                label={`Balance: ${tokenInBalance?.formatted ?? 0}`}
+              />
+            }
           </div>
         </div>
 
@@ -169,12 +183,13 @@ const Swap = () => {
             </button>
           </div>
           <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
-            {isTokenOutBalanceLoading ? (
-              // TO DO : VERIFIER QU'ON EST SUR MAINNET OU LOCALHOST POUR L'INSTANT
-              <p>Balance fetching...</p>
-            ) : (
-              <p>Balance: {tokenOutBalance?.formatted ?? 0}</p>
-            )}
+            {isConnected && 
+              <Fetching 
+                isFetching={isTokenOutBalanceLoading}
+                fetchingLabel="Balance fetching..."
+                label={`Balance: ${tokenOutBalance?.formatted ?? 0}`}
+              />
+            }
           </div>
         </div>
 
@@ -183,7 +198,7 @@ const Swap = () => {
               chain?.name === 'Localhost' || 'Mainnet' ? (
                 <Button label='Swap' onClick={handleSwap} />
               ) : (
-                <Button label='Switch to Localhost or' onClick={() => switchNetwork?.(3137)} />
+                <Button label='Switch to Mainnet' onClick={() => switchNetwork?.(1)} />
               )
             ) : (
               <ConnectWalletButton />

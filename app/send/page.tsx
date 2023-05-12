@@ -96,24 +96,24 @@ const Send = () => {
       {isLoadingModalOpen && isLoading && 
         <Transaction
           isLoading 
-          bgColor="white"
-          textColor="gray-900"
+          bgColor="bg-white"
+          textColor="text-gray-900"
           onClose={() => setIsLoadingModalOpen(false)} 
         />
       }
       {isSuccessModalOpen && isSuccess && 
         <Transaction
           isSuccess
-          bgColor="green-400"
-          textColor="white"
+          bgColor="bg-green-400"
+          textColor="text-white"
           label={`${data?.hash}`} 
           onClose={() => setIsSuccessModalOpen(false)} 
         />
       }
       {isErrorModalOpen && (error || isError) &&
         <Transaction
-          bgColor="red-400"
-          textColor="white"
+          bgColor="bg-red-400"
+          textColor="text-white"
           isError
           label={`${error}`}
           onClose={() => setIsErrorModalOpen(false)} 

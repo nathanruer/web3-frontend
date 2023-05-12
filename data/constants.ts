@@ -1,7 +1,7 @@
-import abi from "./SetGetNumberABI.json";
+import setGetNumberABI from "./SetGetNumberABI.json";
 
 export const SetGetNumber_contractAddress = "0x56bb8116e453A7B05155aC8C159cFB3a7A5Db02a";
-export const SetGetNumber_contractABI = abi.abi;
+export const SetGetNumber_contractABI = setGetNumberABI.abi;
 
 export const links = [
   {
@@ -19,6 +19,10 @@ export const links = [
   {
     label: 'Swap',
     href: 'swap'
+  },
+  {
+    label: 'New Uniswap v2 pools',
+    href: 'event-newpools'
   }
 ]
 

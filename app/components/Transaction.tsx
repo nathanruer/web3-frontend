@@ -25,7 +25,7 @@ const Transaction: React.FC<TransactionProps> = ({
 }) => {
   return (
     <div className={`flex absolute right-10 top-24 py-2 px-4 shadow-xl rounded-xl 
-    gap-3 bg-${bgColor} text-${textColor} max-w-[75%] lg:max-w-[25%] `}>
+    gap-3 ${bgColor} ${textColor} max-w-[75%] lg:max-w-[25%] `}>
         {isLoading &&
           <div className="flex flex-row items-center gap-1">
             <Loader color="black"/>

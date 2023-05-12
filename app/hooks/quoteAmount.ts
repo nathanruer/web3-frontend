@@ -20,11 +20,12 @@ export const quoteAmount = async (
 
   let path: string[];
   try {
+    // TODO: check if enough liquidity on the pair
     path = [tokenInAddress, tokenOutAddress];
     await uniswapRouter.getAmountsOut(ethers.utils.parseEther(amountIn), path);
   } catch {
     try {
-      // if no direct path -> pass per ETH 
+      // If no direct path -> pass per ETH / arbitrary and not optimal for now
       const WETHAddress = '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2';
       path = [tokenInAddress, WETHAddress, tokenOutAddress];
       await uniswapRouter.getAmountsOut(ethers.utils.parseEther(amountIn), path);
@@ -45,4 +46,3 @@ export const quoteAmount = async (
 
   return formattedAmountOut;
 };
-
