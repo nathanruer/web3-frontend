@@ -2,11 +2,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { erc20ABI } from 'wagmi'
+import { formatTimestamp } from '../utils/formatTimestamp';
 import pairAbi from '../../data/pairAbi.json';
 import Heading from '../components/Heading';
 
 const NewPools = () => {
-  const [newPools, setNewPools] = useState<{ token0: string; token1: string; pair: string; }[]>([]);
+  const [newPools, setNewPools] = useState<{ token0: string; token1: string; pair: string; timestamp: number; }[]>([]);
+  const reversedNewPools = [...newPools].reverse();
 
   const pairCreatedHandler = useCallback(async (token0: string, token1: string, pair: string) => {
     try {
@@ -16,19 +18,23 @@ const NewPools = () => {
   
       // Check if liquidity added
       const [reserve0, reserve1] = await pairContract.getReserves();
-      if (reserve0 > 0 && reserve1 > 0) {      
+      if (reserve0 > 0 && reserve1 > 0) {
         const token0Contract = new ethers.Contract(token0, erc20ABI, provider);
         const token0Symbol = await token0Contract.symbol();
   
         const token1Contract = new ethers.Contract(token1, erc20ABI, provider);
         const token1Symbol = await token1Contract.symbol();
   
-        setNewPools(prevPools => [...prevPools, { token0: `${token0Symbol} (${token0})`, token1: `${token1Symbol} (${token1})`, pair }]);
+        const blockNumber = await provider.getBlockNumber();
+        const block = await provider.getBlock(blockNumber);
+        const timestamp = block.timestamp;
+  
+        setNewPools(prevPools => [...prevPools, { token0: `${token0Symbol} (${token0})`, token1: `${token1Symbol} (${token1})`, pair, timestamp }]);
       }
     } catch (error) {
       console.log("Error while looking for new pair created:", error);
     }
-  }, []);
+  }, []);  
 
   useEffect(() => {
     async function getNewPools() {
@@ -37,17 +43,18 @@ const NewPools = () => {
       const factoryAbi = [
         'event PairCreated(address indexed token0, address indexed token1, address pair, uint)'
       ];
-
+  
       const factoryContract = new ethers.Contract(factoryAddress, factoryAbi, provider);
-
+  
       factoryContract.on('PairCreated', pairCreatedHandler);
       return () => {
         factoryContract.off('PairCreated', pairCreatedHandler);
       };
     }
-
+  
     getNewPools();
-  }, [pairCreatedHandler]);
+  }, []);
+  
 
   return (
     <div>
@@ -56,12 +63,12 @@ const NewPools = () => {
         subtitle="Listen to new Uniswap V2 pools on Ethereum Mainnet!"
       />
 
-      {newPools.reverse().map((pool, index) => (
+      {reversedNewPools.map((pool, index) => (
         <div key={index}>
           <div className="w-full font-light px-20 py-5">
             <div className='border py-3 px-5 rounded-xl'>
               <p className='font-semibold'>
-                New pair just created!
+              {formatTimestamp(pool.timestamp)} New pair just created!
               </p>
               <div className='py-2'>
                 <p>{pool.token0} - {pool.token1}</p>

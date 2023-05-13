@@ -13,7 +13,7 @@ import useInputCoinsOutModal from "../hooks/useInputCoinsOutModal";
 import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
 
-import { quoteAmount } from "../hooks/quoteAmount";
+import { quoteAmount } from "../utils/quoteAmount";
 
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 import Fetching from "../components/Fetching";
