@@ -18,9 +18,12 @@ const NewPools = () => {
   }[]>([]);
   const reversedNewPools = [...newPools].reverse();
 
-  const handlePairCreated = useCallback((token0: string, token1: string, pair: string) => {
-    pairCreatedHandler(token0, token1, pair, setNewPools);
-  }, []);
+  const handlePairCreated = useCallback(
+    (token0: string, token1: string, pair: string) => {
+      pairCreatedHandler(token0, token1, pair, setNewPools);
+    },
+    [pairCreatedHandler, setNewPools]
+  );
 
   useEffect(() => {
     getNewPools(handlePairCreated);
@@ -47,9 +50,9 @@ const NewPools = () => {
               <div className='py-2'>
                 <p className="hidden sm:block">{pool.token0Label} ({pool.token0Address}) - {pool.token1Label} ({pool.token1Address})</p>
                 <p className="sm:hidden">{`${pool.token0Label} (${pool.token0Address.substring(0, 5)}...${pool.token0Address.substring(pool.token0Address.length - 5)}) - ${pool.token1Label} (${pool.token1Address.substring(0, 5)}...${pool.token1Address.substring(pool.token1Address.length - 5)})`}</p>
-                <p>Pair address :</p>
-                <p className="hidden sm:block">{pool.pair}</p>
-                <p className="sm:hidden">{`${pool.pair.substring(0, 5)}...${pool.pair.substring(pool.pair.length - 5)}`}</p>
+
+                <p className="hidden sm:block">Pair address: {pool.pair}</p>
+                <p className="sm:hidden">{`Pair adress: ${pool.pair.substring(0, 5)}...${pool.pair.substring(pool.pair.length - 5)}`}</p>
                 <p>
                   <a
                     target="_blank"

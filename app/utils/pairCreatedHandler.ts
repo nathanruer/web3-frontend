@@ -33,17 +33,24 @@ export async function pairCreatedHandler(
       const block = await provider.getBlock(blockNumber);
       const timestamp = block.timestamp;
 
-      setNewPools(prevPools => [
-        ...prevPools,
-        {
-          token0Label: `${token0Symbol}`,
-          token0Address: `${token0}`,
-          token1Label: `${token1Symbol}`,
-          token1Address: `${token1}`,
-          pair,
-          timestamp
+      setNewPools(prevPools => {
+        const existingPair = prevPools.find(pool => pool.pair === pair);
+        if (existingPair) {
+          return prevPools; // Don't add again the pair if it is already added
         }
-      ]);
+      
+        return [
+          ...prevPools,
+          {
+            token0Label: `${token0Symbol}`,
+            token0Address: `${token0}`,
+            token1Label: `${token1Symbol}`,
+            token1Address: `${token1}`,
+            pair,
+            timestamp
+          }
+        ];
+      });      
     }
   } catch (error) {
     console.log("Error while looking for new pair created:", error);

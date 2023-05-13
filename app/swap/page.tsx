@@ -14,6 +14,7 @@ import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
 
 import { quoteAmount } from "../utils/quoteAmount";
+import { getCryptoPrice } from "../utils/fetchPriceCoingecko";
 
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 import Fetching from "../components/Fetching";
@@ -31,15 +32,30 @@ const Swap = () => {
 
   const [tokenInLabel, setTokenInLabel] = useState("WETH");
   const [tokenInAddress, setTokenInAddress] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
+  const [tokenInGeckoId, setTokenInGeckoId ] = useState("weth");
   const [tokenOutLabel, setTokenOutLabel] = useState("USDC");
   const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
+  const [tokenOutGeckoId, setTokenOutGeckoId ] = useState("usd-coin");
+
   const [amountIn, setAmountIn] = useState("1");
+  const [amountInGecko, setAmountInGecko] = useState<number | null>(null);
   const [amountOut, setAmountOut] = useState("");
+  const [amountOutGecko, setAmountOutGecko] = useState<number | null>(null);
   const [isAmountInLoading, setIsAmountInLoading] = useState(false);
   const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
 
+  async function updateTokenInGeckoPrice(tokenGeckoId: string, amount: string) {
+    const amountInGecko = await getCryptoPrice(tokenGeckoId, amount);
+    setAmountInGecko(amountInGecko);
+  }
+  async function updateTokenOutGeckoPrice(tokenGeckoId: string, amount: string) {
+    const amountOutGecko = await getCryptoPrice(tokenGeckoId, amount);
+    setAmountOutGecko(amountOutGecko);
+  }
+
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   async function handleSelectTokenInAddress(tokenAddress: string) {
+    // TO DO : FETCH NEW GECKO PRICE FOR NEW TOKEN ADDRESS
     try {
       setTokenInAddress(tokenAddress);
       setIsAmountOutLoading(true);
@@ -50,8 +66,11 @@ const Swap = () => {
       console.error("Error while quoting amount out:", error);
     }
   }
+  const handleSelectTokenInGeckoId = (tokenGeckoId: string) => {setTokenInGeckoId(tokenGeckoId)};
+
   const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
   async function handleSelectTokenOutAddress(tokenAddress: string) {
+    // TO DO : FETCH NEW GECKO PRICE FOR NEW TOKEN ADDRESS
     try {
       setTokenOutAddress(tokenAddress);
       setIsAmountOutLoading(true);
@@ -62,9 +81,11 @@ const Swap = () => {
       console.error("Error while quoting amount out:", error);
     }
   }
+  const handleSelectTokenOutGeckoId = (tokenGeckoId: string) => {setTokenOutGeckoId(tokenGeckoId)};
 
   async function handleAmountInChanged(e: string) {
     setAmountIn(e);
+    updateTokenInGeckoPrice(tokenInGeckoId, e);
     try {
       if (e === '') {
         setAmountOut('');
@@ -73,9 +94,11 @@ const Swap = () => {
         setAmountOut('0');
         return;
       }
+
       setIsAmountOutLoading(true);
       const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
       setAmountOut(amountOut);
+      updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
       setIsAmountOutLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
@@ -83,6 +106,7 @@ const Swap = () => {
   }
   async function handleAmountOutChanged(e: string) {
     setAmountOut(e);
+    updateTokenOutGeckoPrice(tokenOutGeckoId, e);
     try {
       if (e === '') {
         setAmountIn('');
@@ -91,9 +115,13 @@ const Swap = () => {
         setAmountIn('0');
         return;
       }
+
       setIsAmountInLoading(true);
+      const amountOutGecko = await getCryptoPrice(tokenOutGeckoId, e);
+      setAmountOutGecko(amountOutGecko);
       const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
       setAmountIn(amountIn);
+      updateTokenInGeckoPrice(tokenInGeckoId, amountIn);
       setIsAmountInLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
@@ -147,14 +175,18 @@ const Swap = () => {
               {tokenInLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
-          <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
-            {isConnected && 
-              <Fetching 
-                isFetching={isTokenInBalanceLoading}
-                fetchingLabel="Balance fetching..."
-                label={`Balance: ${tokenInBalance?.formatted ?? 0}`}
-              />
-            }
+          <div className="flex text-align justify-between p-1
+          text-gray-400 font-light text-sm">
+            <p>${amountInGecko}</p>
+            <div>
+              {isConnected && 
+                <Fetching 
+                  isFetching={isTokenInBalanceLoading}
+                  fetchingLabel="Balance fetching..."
+                  label={`Balance: ${tokenInBalance?.formatted ?? 0}`}
+                />
+              }
+            </div>
           </div>
         </div>
 
@@ -182,14 +214,18 @@ const Swap = () => {
               {tokenOutLabel}<MdOutlineKeyboardArrowDown />
             </button>
           </div>
-          <div className="flex text-align justify-end p-1 text-gray-400 font-light text-sm">
-            {isConnected && 
-              <Fetching 
-                isFetching={isTokenOutBalanceLoading}
-                fetchingLabel="Balance fetching..."
-                label={`Balance: ${tokenOutBalance?.formatted ?? 0}`}
-              />
-            }
+          <div className="flex text-align justify-between p-1
+          text-gray-400 font-light text-sm">
+            <p>${amountOutGecko}</p>
+            <div>
+              {isConnected && 
+                <Fetching 
+                  isFetching={isTokenOutBalanceLoading}
+                  fetchingLabel="Balance fetching..."
+                  label={`Balance: ${tokenOutBalance?.formatted ?? 0}`}
+                />
+              }
+            </div>
           </div>
         </div>
 
@@ -209,10 +245,12 @@ const Swap = () => {
       <InputCoinsInModal
         onSelectTokenLabel={handleSelectTokenInLabel}
         onSelectTokenAddress={handleSelectTokenInAddress}
+        onSelectTokenGeckoId={handleSelectTokenInGeckoId}
       />
       <InputCoinsOutModal 
         onSelectTokenLabel={handleSelectTokenOutLabel}
         onSelectTokenAddress={handleSelectTokenOutAddress}
+        onSelectTokenGeckoId={handleSelectTokenOutGeckoId}
       />
     </div>
   );

@@ -7,14 +7,16 @@ import { coins } from "@/data/constants";
 interface InputCoinsInModalProps {
   onSelectTokenLabel: (token: string) => void;
   onSelectTokenAddress: (token: string) => void;
+  onSelectTokenGeckoId: (token: string) => void;
 }
 
-const InputCoinsInModal = ({ onSelectTokenLabel, onSelectTokenAddress }: InputCoinsInModalProps) => {
+const InputCoinsInModal = ({ onSelectTokenLabel, onSelectTokenAddress, onSelectTokenGeckoId }: InputCoinsInModalProps) => {
   const inputCoinsModal = useInputCoinsModal();
 
-  const handleSelectToken = (token: string, address: string) => {
+  const handleSelectToken = (token: string, address: string, geckoId: string) => {
     onSelectTokenLabel(token);
     onSelectTokenAddress(address);
+    onSelectTokenGeckoId(geckoId);
     inputCoinsModal.onClose();
   };
 
@@ -24,7 +26,7 @@ const InputCoinsInModal = ({ onSelectTokenLabel, onSelectTokenAddress }: InputCo
         <div key={item.label}>
           <button
             className="flex w-full p-2 rounded justify-start"
-            onClick={() => handleSelectToken(item.label, item.address)}
+            onClick={() => handleSelectToken(item.label, item.address, item.geckoId)}
           >
             {item.label}
           </button>
