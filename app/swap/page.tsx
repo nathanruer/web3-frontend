@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { useAccount, useNetwork, useSwitchNetwork, useBalance } from 'wagmi'
 import ConnectWalletButton from '../components/ConnectWalletButton';
@@ -37,12 +37,14 @@ const Swap = () => {
   const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
   const [tokenOutGeckoId, setTokenOutGeckoId ] = useState("usd-coin");
 
-  const [amountIn, setAmountIn] = useState("1");
-  const [amountInGecko, setAmountInGecko] = useState<number | null>(null);
-  const [amountOut, setAmountOut] = useState("");
-  const [amountOutGecko, setAmountOutGecko] = useState<number | null>(null);
+  const [amountIn, setAmountIn] = useState("");
   const [isAmountInLoading, setIsAmountInLoading] = useState(false);
+  const [amountInGecko, setAmountInGecko] = useState<number | null>(null);
+  const [isAmountInGeckoLoading, setIsAmountInGeckoLoading] = useState(false);
+  const [amountOut, setAmountOut] = useState("");
   const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
+  const [amountOutGecko, setAmountOutGecko] = useState<number | null>(null);
+  const [isAmountOutGeckoLoading, setIsAmountOutGeckoLoading] = useState(false);
 
   async function updateTokenInGeckoPrice(tokenGeckoId: string, amount: string) {
     const amountInGecko = await getCryptoPrice(tokenGeckoId, amount);
@@ -55,37 +57,53 @@ const Swap = () => {
 
   const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
   async function handleSelectTokenInAddress(tokenAddress: string) {
-    // TO DO : FETCH NEW GECKO PRICE FOR NEW TOKEN ADDRESS
     try {
       setTokenInAddress(tokenAddress);
+
       setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+
       const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
       setAmountOut(amountOut);
+
+      updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
       setIsAmountOutLoading(false);
+      setIsAmountOutGeckoLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
     }
   }
-  const handleSelectTokenInGeckoId = (tokenGeckoId: string) => {setTokenInGeckoId(tokenGeckoId)};
+  const handleSelectTokenInGeckoId = (tokenGeckoId: string) => {setTokenInGeckoId(tokenGeckoId);};
+  useEffect(() => {
+    updateTokenInGeckoPrice(tokenInGeckoId, amountIn);
+  }, [tokenInGeckoId, amountIn]);
 
-  const handleSelectTokenOutLabel = (tokenLabel: string) => {setTokenOutLabel(tokenLabel)};
+  const handleSelectTokenOutLabel = (tokenLabel: string) => {
+    setTokenOutLabel(tokenLabel);
+  };
   async function handleSelectTokenOutAddress(tokenAddress: string) {
-    // TO DO : FETCH NEW GECKO PRICE FOR NEW TOKEN ADDRESS
     try {
       setTokenOutAddress(tokenAddress);
+    
       setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+
       const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
       setAmountOut(amountOut);
+
       setIsAmountOutLoading(false);
+      setIsAmountOutGeckoLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
     }
   }
   const handleSelectTokenOutGeckoId = (tokenGeckoId: string) => {setTokenOutGeckoId(tokenGeckoId)};
+  useEffect(() => {
+    updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
+  }, [tokenOutGeckoId, amountOut]);
 
   async function handleAmountInChanged(e: string) {
     setAmountIn(e);
-    updateTokenInGeckoPrice(tokenInGeckoId, e);
     try {
       if (e === '') {
         setAmountOut('');
@@ -94,11 +112,16 @@ const Swap = () => {
         setAmountOut('0');
         return;
       }
+      updateTokenInGeckoPrice(tokenInGeckoId, e);
 
       setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+
       const amountOut = await quoteAmount(tokenInAddress, tokenOutAddress, e);
       setAmountOut(amountOut);
       updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
+
+      setIsAmountOutGeckoLoading(false);
       setIsAmountOutLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
@@ -106,7 +129,6 @@ const Swap = () => {
   }
   async function handleAmountOutChanged(e: string) {
     setAmountOut(e);
-    updateTokenOutGeckoPrice(tokenOutGeckoId, e);
     try {
       if (e === '') {
         setAmountIn('');
@@ -115,13 +137,18 @@ const Swap = () => {
         setAmountIn('0');
         return;
       }
+      updateTokenOutGeckoPrice(tokenOutGeckoId, e);
 
       setIsAmountInLoading(true);
+      setIsAmountInGeckoLoading(true);
+
       const amountOutGecko = await getCryptoPrice(tokenOutGeckoId, e);
       setAmountOutGecko(amountOutGecko);
       const amountIn = await quoteAmount(tokenOutAddress, tokenInAddress, e);
       setAmountIn(amountIn);
       updateTokenInGeckoPrice(tokenInGeckoId, amountIn);
+
+      setIsAmountInGeckoLoading(false);
       setIsAmountInLoading(false);
     } catch (error) {
       console.error("Error while quoting amount out:", error);
@@ -161,6 +188,7 @@ const Swap = () => {
             <input
               type="number"
               value={amountIn}
+              placeholder="Enter value"
               onFocus={() => setIsInputInFocused(true)}
               onBlur={() => setIsInputInFocused(false)}
               onChange={(e) => handleAmountInChanged(e.target.value)}
@@ -177,7 +205,9 @@ const Swap = () => {
           </div>
           <div className="flex text-align justify-between p-1
           text-gray-400 font-light text-sm">
-            <p>${amountInGecko}</p>
+            {amountIn && amountInGecko && !isAmountInGeckoLoading ? (
+              <p>${amountInGecko}</p>
+            ) : null}
             <div>
               {isConnected && 
                 <Fetching 
@@ -200,6 +230,7 @@ const Swap = () => {
             <input
               type="number"
               value={amountOut}
+              placeholder="Enter value"
               onFocus={() => setIsInputOutFocused(true)}
               onBlur={() => setIsInputOutFocused(false)}
               onChange={(e) => handleAmountOutChanged(e.target.value)}
@@ -216,7 +247,9 @@ const Swap = () => {
           </div>
           <div className="flex text-align justify-between p-1
           text-gray-400 font-light text-sm">
-            <p>${amountOutGecko}</p>
+            {amountOut && amountOutGecko && !isAmountOutGeckoLoading ? (
+              <p>${amountOutGecko}</p>
+            ) : null}
             <div>
               {isConnected && 
                 <Fetching 

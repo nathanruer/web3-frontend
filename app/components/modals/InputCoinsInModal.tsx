@@ -15,8 +15,8 @@ const InputCoinsInModal = ({ onSelectTokenLabel, onSelectTokenAddress, onSelectT
 
   const handleSelectToken = (token: string, address: string, geckoId: string) => {
     onSelectTokenLabel(token);
-    onSelectTokenAddress(address);
     onSelectTokenGeckoId(geckoId);
+    onSelectTokenAddress(address);
     inputCoinsModal.onClose();
   };
 
