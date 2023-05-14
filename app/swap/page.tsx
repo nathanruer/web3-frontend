@@ -16,6 +16,7 @@ import InputCoinsInModal from "../components/modals/InputCoinsInModal";
 import { quoteAmount } from "../utils/quoteAmount";
 import { getCryptoPrice } from "../utils/fetchPriceCoingecko";
 
+import { BsInfoCircle } from 'react-icons/bs';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
 import Fetching from "../components/Fetching";
 
@@ -168,6 +169,21 @@ const Swap = () => {
     // TODO: CREATE THE REAL SWAP FUNCTION
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
   }
+
+  const [showMessageTokenIn, setShowMessageTokenIn] = useState(false);
+  const handleMouseEnterTokenIn = () => {
+    setShowMessageTokenIn(true);
+  };
+  const handleMouseLeaveTokenIn = () => {
+    setShowMessageTokenIn(false);
+  };
+  const [showMessageTokenOut, setShowMessageTokenOut] = useState(false);
+  const handleMouseEnterTokenOut = () => {
+    setShowMessageTokenOut(true);
+  };
+  const handleMouseLeaveTokenOut = () => {
+    setShowMessageTokenOut(false);
+  };
   
   return (
     <div>
@@ -204,9 +220,26 @@ const Swap = () => {
             </button>
           </div>
           <div className="flex text-align justify-between p-1
-          text-gray-400 font-light text-sm">
+          text-gray-400 font-light text-sm relative">
             {amountIn && amountInGecko && !isAmountInGeckoLoading ? (
-              <p>${amountInGecko}</p>
+              <div className="flex gap-1 items-center">
+                <BsInfoCircle
+                  onMouseEnter={handleMouseEnterTokenIn}
+                  onMouseLeave={handleMouseLeaveTokenIn}
+                  className="cursor-pointer"
+                />
+                {showMessageTokenIn && (
+                  <div className="absolute bg-white p-1 rounded shadow top-[-30px] left-0">
+                    <div className="relative">
+                      <div className="bg-white rounded shadow">
+                        <p className="text-gray-800 relative z-10">Live price feed from coingecko</p>
+                      </div>
+                      <div className="absolute top-[10px] w-4 h-4 bg-white transform rotate-45 z-0"></div>
+                    </div>
+                  </div>
+                )}
+                <p>${amountInGecko}</p>
+              </div>
             ) : null}
             <div>
               {isConnected && 
@@ -246,9 +279,26 @@ const Swap = () => {
             </button>
           </div>
           <div className="flex text-align justify-between p-1
-          text-gray-400 font-light text-sm">
+          text-gray-400 font-light text-sm relative">
             {amountOut && amountOutGecko && !isAmountOutGeckoLoading ? (
-              <p>${amountOutGecko}</p>
+              <div className="flex gap-1 items-center">
+                <BsInfoCircle
+                  onMouseEnter={handleMouseEnterTokenOut}
+                  onMouseLeave={handleMouseLeaveTokenOut}
+                  className="cursor-pointer"
+                />
+                {showMessageTokenOut && (
+                  <div className="absolute bg-white p-1 rounded shadow top-[-30px] left-0">
+                    <div className="relative">
+                      <div className="bg-white rounded shadow">
+                        <p className="text-gray-800 relative z-10">Live price feed from coingecko</p>
+                      </div>
+                      <div className="absolute top-[10px] w-4 h-4 bg-white transform rotate-45 z-0"></div>
+                    </div>
+                  </div>
+                )}
+                <p>${amountOutGecko}</p>
+              </div>
             ) : null}
             <div>
               {isConnected && 
