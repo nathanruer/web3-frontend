@@ -12,16 +12,11 @@ interface InputCoinsInModalProps {
 
 const InputCoinsInModal = ({ onSelectToken }: InputCoinsInModalProps) => {
   const inputCoinsModal = useInputCoinsModal();
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [shouldCallUseToken, setShouldCallUseToken] = useState(false);
   const { data: verifiedToken } = useToken({
     address: `0x${searchTerm.slice(2)}` || "",
   });
-
-  useEffect(() => {
-    const isValidAddress = /^0x[0-9A-Fa-f]{40}$/i.test(searchTerm);
-    setShouldCallUseToken(isValidAddress);
-  }, [searchTerm]);
 
   const handleSelectToken = (token: string, address: string, geckoId: string) => {
     onSelectToken(token, address, geckoId);
@@ -38,17 +33,22 @@ const InputCoinsInModal = ({ onSelectToken }: InputCoinsInModalProps) => {
     return isAddressExactMatch || (isLabelMatch && !isAddressExactMatch);
   });
 
-  const tokensToDisplay = shouldCallUseToken ? [verifiedToken, ...filteredCoins] : filteredCoins;
+  const isAddressDefined = filteredCoins.some(item => item?.address?.toLowerCase() === searchTerm.toLowerCase());
+
+  const tokensToDisplay = isAddressDefined ? filteredCoins : verifiedToken ? [verifiedToken, ...filteredCoins] : filteredCoins;
 
   const bodyContent = (
     <div className="flex flex-col">
-      <div className={`rounded mb-4 border hover:border-white transition`}>
+      <div className={`rounded mb-4 border hover:border-white transition
+      ${isInputFocused ? 'border-white ' : 'border-gray-500'}`}>
         <input
           type="text"
           placeholder="Search... (Symbol or Address)"
           className="p-2 w-full"
           value={searchTerm}
           onChange={handleSearch}
+          onFocus={() => setIsInputFocused(true)}
+          onBlur={() => setIsInputFocused(false)}
         />
       </div>
       {tokensToDisplay.map((item) => (
