@@ -42,13 +42,15 @@ const Swap = () => {
     setTokenInAddress(tokenAddress);
     setTokenInGeckoId(tokenGeckoId);
 
-    setIsAmountOutLoading(true);
-    setIsAmountOutGeckoLoading(true);
-    const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
-    setAmountOut(amountOut);
-    updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
-    setIsAmountOutLoading(false);
-    setIsAmountOutGeckoLoading(false);
+    if (amountIn) {
+      setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+      const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
+      setAmountOut(amountOut);
+      updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
+      setIsAmountOutLoading(false);
+      setIsAmountOutGeckoLoading(false);
+    }
   }
   const [showMessageTokenIn, setShowMessageTokenIn] = useState(false);
   const handleMouseEnterTokenIn = () => {
@@ -73,12 +75,14 @@ const Swap = () => {
     setTokenOutAddress(tokenAddress);
     setTokenOutGeckoId(tokenGeckoId)
 
-    setIsAmountOutLoading(true);
-    setIsAmountOutGeckoLoading(true);
-    const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
-    setAmountOut(amountOut);
-    setIsAmountOutLoading(false);
-    setIsAmountOutGeckoLoading(false);
+    if (amountIn) {
+      setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+      const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
+      setAmountOut(amountOut);
+      setIsAmountOutLoading(false);
+      setIsAmountOutGeckoLoading(false);
+    }
   }
   const [showMessageTokenOut, setShowMessageTokenOut] = useState(false);
   const handleMouseEnterTokenOut = () => {
@@ -99,12 +103,14 @@ const Swap = () => {
     setTokenOutAddress(tokenInAddress);
     setTokenOutGeckoId(tokenInGeckoId);
 
-    setIsAmountOutLoading(true);
-    setIsAmountOutGeckoLoading(true);
-    const amountOut = await quoteAmount(tokenOutAddress, tokenInAddress, amountIn);
-    setAmountOut(amountOut);
-    setIsAmountOutLoading(false);
-    setIsAmountOutGeckoLoading(false);
+    if (amountIn) {
+      setIsAmountOutLoading(true);
+      setIsAmountOutGeckoLoading(true);
+      const amountOut = await quoteAmount(tokenOutAddress, tokenInAddress, amountIn);
+      setAmountOut(amountOut);
+      setIsAmountOutLoading(false);
+      setIsAmountOutGeckoLoading(false);
+    }
   }
 
   //------- HANDLE SELECT AMOUNT IN -------//
@@ -213,7 +219,7 @@ const Swap = () => {
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 border
       shadow-md shadow-white relative">
         <div className={`p-3 flex flex-col justify-center text-black
-        rounded-xl hover:border mb-1 border
+        rounded-xl mb-1 border
         ${isInputInFocused ? 'border-white ' : 'border-gray-600'}`}>
           <div className="flex items-center gap-2">
             {isAmountInLoading ?
@@ -281,7 +287,7 @@ const Swap = () => {
 
 
         <div className={`p-3 flex flex-col justify-center text-black
-        rounded-xl hover:border mb-1 border
+        rounded-xl mb-1 border
         ${isInputOutFocused ? 'border-white ' : 'border-gray-600'}`}>
           <div className="flex items-center gap-2">
             {isAmountOutLoading ?
