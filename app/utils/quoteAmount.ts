@@ -30,7 +30,8 @@ export const quoteAmount = async (
       path = [tokenInAddress, WETHAddress, tokenOutAddress];
       await uniswapRouter.getAmountsOut(ethers.utils.parseEther(amountIn), path);
     } catch {
-      throw new Error('Impossible to find a trading path');
+      console.log('from', tokenInAddress, 'to', tokenOutAddress)
+      throw new Error('Impossible to find a trading path from');
     }
   }
 

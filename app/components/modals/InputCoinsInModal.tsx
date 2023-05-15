@@ -5,18 +5,18 @@ import Modal from "./Modal";
 import { coins } from "@/data/constants";
 
 interface InputCoinsInModalProps {
-  onSelectTokenLabel: (token: string) => void;
-  onSelectTokenAddress: (token: string) => void;
-  onSelectTokenGeckoId: (token: string) => void;
+  onSelectToken: (    
+    tokenLabel: string, 
+    tokenAddress: string, 
+    tokenGeckoId: string 
+  ) => void;
 }
 
-const InputCoinsInModal = ({ onSelectTokenLabel, onSelectTokenAddress, onSelectTokenGeckoId }: InputCoinsInModalProps) => {
+const InputCoinsInModal = ({ onSelectToken }: InputCoinsInModalProps) => {
   const inputCoinsModal = useInputCoinsModal();
 
   const handleSelectToken = (token: string, address: string, geckoId: string) => {
-    onSelectTokenLabel(token);
-    onSelectTokenGeckoId(geckoId);
-    onSelectTokenAddress(address);
+    onSelectToken(token, address, geckoId);
     inputCoinsModal.onClose();
   };
 

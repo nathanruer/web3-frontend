@@ -9,6 +9,7 @@ import useInputCoinsInModal from "../hooks/useInputCoinsInModal";
 import Button from "../components/Button";
 import Heading from "../components/Heading";
 import Loader from "../components/Loader";
+import Fetching from "../components/Fetching";
 import useInputCoinsOutModal from "../hooks/useInputCoinsOutModal";
 import InputCoinsOutModal from "../components/modals/InputCoinsOutModal";
 import InputCoinsInModal from "../components/modals/InputCoinsInModal";
@@ -17,92 +18,100 @@ import { quoteAmount } from "../utils/quoteAmount";
 import { getCryptoPrice } from "../utils/fetchPriceCoingecko";
 
 import { BsInfoCircle } from 'react-icons/bs';
+import { CgArrowsExchangeAltV } from 'react-icons/cg';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md"
-import Fetching from "../components/Fetching";
 
 const Swap = () => {
   const { address, isConnected } = useAccount();
   const { chain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
 
+
+  //------- HANDLE SELECT TOKEN IN -------//
   const [isInputInFocused, setIsInputInFocused] = useState(false);
-  const [isInputOutFocused, setIsInputOutFocused] = useState(false);
-
   const inputCoinsInModal = useInputCoinsInModal();
-  const inputCoinsOutModal = useInputCoinsOutModal();
-
   const [tokenInLabel, setTokenInLabel] = useState("WETH");
   const [tokenInAddress, setTokenInAddress] = useState("0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2")
   const [tokenInGeckoId, setTokenInGeckoId ] = useState("weth");
+  async function handleSelectTokenIn(
+    tokenLabel: string, 
+    tokenAddress: string, 
+    tokenGeckoId: string
+  ) {
+    setTokenInLabel(tokenLabel);
+    setTokenInAddress(tokenAddress);
+    setTokenInGeckoId(tokenGeckoId);
+
+    setIsAmountOutLoading(true);
+    setIsAmountOutGeckoLoading(true);
+    const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
+    setAmountOut(amountOut);
+    updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
+    setIsAmountOutLoading(false);
+    setIsAmountOutGeckoLoading(false);
+  }
+  const [showMessageTokenIn, setShowMessageTokenIn] = useState(false);
+  const handleMouseEnterTokenIn = () => {
+    setShowMessageTokenIn(true);
+  };
+  const handleMouseLeaveTokenIn = () => {
+    setShowMessageTokenIn(false);
+  };
+
+  //------- HANDLE SELECT TOKEN OUT -------//
+  const [isInputOutFocused, setIsInputOutFocused] = useState(false);
+  const inputCoinsOutModal = useInputCoinsOutModal();
   const [tokenOutLabel, setTokenOutLabel] = useState("USDC");
   const [tokenOutAddress, setTokenOutAddress] = useState("0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48")
   const [tokenOutGeckoId, setTokenOutGeckoId ] = useState("usd-coin");
+  async function handleSelectTokenOut(
+    tokenLabel: string, 
+    tokenAddress: string, 
+    tokenGeckoId: string
+  ) {
+    setTokenOutLabel(tokenLabel);
+    setTokenOutAddress(tokenAddress);
+    setTokenOutGeckoId(tokenGeckoId)
 
+    setIsAmountOutLoading(true);
+    setIsAmountOutGeckoLoading(true);
+    const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
+    setAmountOut(amountOut);
+    setIsAmountOutLoading(false);
+    setIsAmountOutGeckoLoading(false);
+  }
+  const [showMessageTokenOut, setShowMessageTokenOut] = useState(false);
+  const handleMouseEnterTokenOut = () => {
+    setShowMessageTokenOut(true);
+  };
+  const handleMouseLeaveTokenOut = () => {
+    setShowMessageTokenOut(false);
+  };
+
+  //------- HANDLE SWITCH TOKENS -------//
+  async function handleSwitchTokens() {
+    // TO DO : wait token addresses to correctly change before quoting new amount
+    setTokenInLabel(tokenOutLabel);
+    setTokenInAddress(tokenOutAddress);
+    setTokenInGeckoId(tokenOutGeckoId);
+
+    setTokenOutLabel(tokenInLabel);
+    setTokenOutAddress(tokenInAddress);
+    setTokenOutGeckoId(tokenInGeckoId);
+
+    setIsAmountOutLoading(true);
+    setIsAmountOutGeckoLoading(true);
+    const amountOut = await quoteAmount(tokenOutAddress, tokenInAddress, amountIn);
+    setAmountOut(amountOut);
+    setIsAmountOutLoading(false);
+    setIsAmountOutGeckoLoading(false);
+  }
+
+  //------- HANDLE SELECT AMOUNT IN -------//
   const [amountIn, setAmountIn] = useState("");
   const [isAmountInLoading, setIsAmountInLoading] = useState(false);
   const [amountInGecko, setAmountInGecko] = useState<number | null>(null);
   const [isAmountInGeckoLoading, setIsAmountInGeckoLoading] = useState(false);
-  const [amountOut, setAmountOut] = useState("");
-  const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
-  const [amountOutGecko, setAmountOutGecko] = useState<number | null>(null);
-  const [isAmountOutGeckoLoading, setIsAmountOutGeckoLoading] = useState(false);
-
-  async function updateTokenInGeckoPrice(tokenGeckoId: string, amount: string) {
-    const amountInGecko = await getCryptoPrice(tokenGeckoId, amount);
-    setAmountInGecko(amountInGecko);
-  }
-  async function updateTokenOutGeckoPrice(tokenGeckoId: string, amount: string) {
-    const amountOutGecko = await getCryptoPrice(tokenGeckoId, amount);
-    setAmountOutGecko(amountOutGecko);
-  }
-
-  const handleSelectTokenInLabel = (tokenLabel: string) => {setTokenInLabel(tokenLabel)};
-  async function handleSelectTokenInAddress(tokenAddress: string) {
-    try {
-      setTokenInAddress(tokenAddress);
-
-      setIsAmountOutLoading(true);
-      setIsAmountOutGeckoLoading(true);
-
-      const amountOut = await quoteAmount(tokenAddress, tokenOutAddress, amountIn);
-      setAmountOut(amountOut);
-
-      updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
-      setIsAmountOutLoading(false);
-      setIsAmountOutGeckoLoading(false);
-    } catch (error) {
-      console.error("Error while quoting amount out:", error);
-    }
-  }
-  const handleSelectTokenInGeckoId = (tokenGeckoId: string) => {setTokenInGeckoId(tokenGeckoId);};
-  useEffect(() => {
-    updateTokenInGeckoPrice(tokenInGeckoId, amountIn);
-  }, [tokenInGeckoId, amountIn]);
-
-  const handleSelectTokenOutLabel = (tokenLabel: string) => {
-    setTokenOutLabel(tokenLabel);
-  };
-  async function handleSelectTokenOutAddress(tokenAddress: string) {
-    try {
-      setTokenOutAddress(tokenAddress);
-    
-      setIsAmountOutLoading(true);
-      setIsAmountOutGeckoLoading(true);
-
-      const amountOut = await quoteAmount(tokenInAddress, tokenAddress, amountIn);
-      setAmountOut(amountOut);
-
-      setIsAmountOutLoading(false);
-      setIsAmountOutGeckoLoading(false);
-    } catch (error) {
-      console.error("Error while quoting amount out:", error);
-    }
-  }
-  const handleSelectTokenOutGeckoId = (tokenGeckoId: string) => {setTokenOutGeckoId(tokenGeckoId)};
-  useEffect(() => {
-    updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
-  }, [tokenOutGeckoId, amountOut]);
-
   async function handleAmountInChanged(e: string) {
     setAmountIn(e);
     try {
@@ -128,6 +137,12 @@ const Swap = () => {
       console.error("Error while quoting amount out:", error);
     }
   }
+
+  //------- HANDLE SELECT AMOUNT OUT -------//
+  const [amountOut, setAmountOut] = useState("");
+  const [isAmountOutLoading, setIsAmountOutLoading] = useState(false);
+  const [amountOutGecko, setAmountOutGecko] = useState<number | null>(null);
+  const [isAmountOutGeckoLoading, setIsAmountOutGeckoLoading] = useState(false);
   async function handleAmountOutChanged(e: string) {
     setAmountOut(e);
     try {
@@ -156,6 +171,7 @@ const Swap = () => {
     }
   }
 
+  //------- HANDLE TOKEN BALANCES -------//
   const { data: tokenInBalance, isLoading: isTokenInBalanceLoading } = useBalance({
     address: address,
     token: `0x${tokenInAddress.slice(2)}`,
@@ -165,25 +181,27 @@ const Swap = () => {
     token: `0x${tokenOutAddress.slice(2)}`,
   });
 
+  //------- HANDLE SWAP -------//
   async function handleSwap() {
     // TODO: CREATE THE REAL SWAP FUNCTION
     console.log("Swap de", amountIn, tokenInLabel, ":", tokenInAddress, "vers", tokenOutLabel, ":", tokenOutAddress)
   }
 
-  const [showMessageTokenIn, setShowMessageTokenIn] = useState(false);
-  const handleMouseEnterTokenIn = () => {
-    setShowMessageTokenIn(true);
-  };
-  const handleMouseLeaveTokenIn = () => {
-    setShowMessageTokenIn(false);
-  };
-  const [showMessageTokenOut, setShowMessageTokenOut] = useState(false);
-  const handleMouseEnterTokenOut = () => {
-    setShowMessageTokenOut(true);
-  };
-  const handleMouseLeaveTokenOut = () => {
-    setShowMessageTokenOut(false);
-  };
+  //------- UPDATE COINGECKO TOKENS PRICES -------//
+  async function updateTokenInGeckoPrice(tokenGeckoId: string, amount: string) {
+    const amountInGecko = await getCryptoPrice(tokenGeckoId, amount);
+    setAmountInGecko(amountInGecko);
+  }
+  async function updateTokenOutGeckoPrice(tokenGeckoId: string, amount: string) {
+    const amountOutGecko = await getCryptoPrice(tokenGeckoId, amount);
+    setAmountOutGecko(amountOutGecko);
+  }
+  useEffect(() => {
+    updateTokenOutGeckoPrice(tokenOutGeckoId, amountOut);
+  }, [tokenOutGeckoId, amountOut]);
+  useEffect(() => {
+    updateTokenInGeckoPrice(tokenInGeckoId, amountIn);
+  }, [tokenInGeckoId, amountIn]);
   
   return (
     <div>
@@ -193,10 +211,10 @@ const Swap = () => {
       />
       
       <div className="w-2/3 lg:w-1/3 mx-auto rounded-xl font-semibold p-3 border
-      shadow-md shadow-white">
-        <div className={`p-3 flex flex-col justify-center text-black  mb-2
-        rounded-xl hover:border
-        ${isInputInFocused ? 'border ' : ''}`}>
+      shadow-md shadow-white relative">
+        <div className={`p-3 flex flex-col justify-center text-black
+        rounded-xl hover:border mb-1 border
+        ${isInputInFocused ? 'border-white ' : 'border-gray-600'}`}>
           <div className="flex items-center gap-2">
             {isAmountInLoading ?
             ( <div className="w-full p-2 rounded-xl bg-transparent text-white"><Loader color="white"/></div> )
@@ -253,9 +271,18 @@ const Swap = () => {
           </div>
         </div>
 
-        <div className={`p-3 flex flex-col justify-center text-black mb-2
-        rounded-xl hover:border 
-        ${isInputOutFocused ? 'border' : ''}`}>
+        <div className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <button className="bg-white p-1 rounded-full
+          hover:scale-110 transition duration-300 ease-in-out"
+          onClick={handleSwitchTokens}>
+            <CgArrowsExchangeAltV className="text-gray-900 text-2xl" />
+          </button>
+        </div>
+
+
+        <div className={`p-3 flex flex-col justify-center text-black
+        rounded-xl hover:border mb-1 border
+        ${isInputOutFocused ? 'border-white ' : 'border-gray-600'}`}>
           <div className="flex items-center gap-2">
             {isAmountOutLoading ?
             ( <div className="w-full p-2 rounded-xl bg-transparent text-white"><Loader color="white"/></div> )
@@ -326,14 +353,10 @@ const Swap = () => {
       </div>
 
       <InputCoinsInModal
-        onSelectTokenLabel={handleSelectTokenInLabel}
-        onSelectTokenAddress={handleSelectTokenInAddress}
-        onSelectTokenGeckoId={handleSelectTokenInGeckoId}
+        onSelectToken={handleSelectTokenIn}
       />
       <InputCoinsOutModal 
-        onSelectTokenLabel={handleSelectTokenOutLabel}
-        onSelectTokenAddress={handleSelectTokenOutAddress}
-        onSelectTokenGeckoId={handleSelectTokenOutGeckoId}
+        onSelectToken={handleSelectTokenOut}
       />
     </div>
   );
